@@ -27,28 +27,25 @@ describe SeinfeldEtl::Main do
   end
 
   before do
-    ensure_spec_readiness
     fetcher = SeinfeldApiClient.new
     allow(fetcher).to receive(:execute){}
     allow(fetcher).to receive(:data){ sample_data }
     @main = described_class.new(fetcher: fetcher)
-    @main.execute
-  end
-
-  def ensure_spec_readiness
-    [Quote, Character, Season, Episode].each do |klass|
-      raise "Database polluted" unless klass.count.zero?
-    end
   end
 
   it "creates quotes and supporting objects idempotently" do
-    expect(Quote.count).to eql(sample_data["quotes"].length)
+    expect{
+      @main.execute
+    }.to change{ Quote.count }.by(sample_data["quotes"].length)
 
-    @main.execute
-    expect(Quote.count).to eql(sample_data["quotes"].length)
+    expect{
+      @main.execute
+    }.to_not change{ Quote.count }
   end
 
   it "creates a quote accurately" do
+    @main.execute
+
     quote = Quote.find_by(body: "I would give up red meat just to get a glimpse of you in a bra.")
     expect(quote.season.number).to eq(6)
     expect(quote.episode.number).to eq(9)
@@ -56,6 +53,8 @@ describe SeinfeldEtl::Main do
   end
 
   it "creates the characters properly" do
+    @main.execute
+
     result = Character.pluck(:name)
     expect(result).to match_array(["George", "Jerry"])
   end
