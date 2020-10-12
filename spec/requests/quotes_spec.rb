@@ -60,4 +60,50 @@ RSpec.describe 'quotes', type: :request do
       end
     end
   end
+
+  path '/api/v1/quotes/{id}' do
+
+    get 'Gets a quote' do
+      parameter name: :token, in: :header, type: :string
+      parameter name: :id, in: :path, type: :int
+      produces 'application/json'
+
+      response '200', 'quote retrieved' do
+        let(:token) { @user.token }
+        let(:id){ @demo_quotes.first.id }
+        run_test! do |response|
+          received_quote = json_body["quote"]
+          remote_quote = Quote.find(@demo_quotes.first.id)
+
+          expect(received_quote.keys).to match_array(
+            ["id", "body", "season", "character", "episode"]
+          )
+
+          # Quote Body
+          expect(received_quote["body"]).to eql(remote_quote.body)
+
+          # Season
+          expect(received_quote["season"].keys).to match_array(
+            ["number", "id"]
+          )
+          expect(received_quote["season"]["number"]).to eql(remote_quote.season.number)
+          expect(received_quote["season"]["id"]).to eql(remote_quote.season.id)
+
+          # Episode
+          expect(received_quote["episode"].keys).to match_array(
+            ["number", "id"]
+          )
+          expect(received_quote["episode"]["number"]).to eql(remote_quote.episode.number)
+          expect(received_quote["episode"]["id"]).to eql(remote_quote.episode.id)
+
+          # Character
+          expect(received_quote["character"].keys).to match_array(
+            ["name", "id"]
+          )
+          expect(received_quote["character"]["name"]).to eql(remote_quote.character.name)
+          expect(received_quote["character"]["id"]).to eql(remote_quote.character.id)
+        end
+      end
+    end
+  end
 end
