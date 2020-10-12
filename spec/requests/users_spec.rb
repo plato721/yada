@@ -4,6 +4,7 @@ RSpec.describe 'users', type: :request do
   path '/api/v1/users' do
     post 'Creates an api token' do
       consumes 'application/json'
+      produces 'application/json'
       parameter name: :user, in: :body, schema: {
         type: :object,
         properties: {

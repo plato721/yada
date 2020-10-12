@@ -28,3 +28,6 @@
 
 # rvm
 .ruby-gemset
+
+coverage
+
