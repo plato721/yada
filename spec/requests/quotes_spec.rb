@@ -29,33 +29,7 @@ RSpec.describe 'quotes', type: :request do
           end
           remote_quote = Quote.find(@demo_quotes.first.id)
 
-          expect(received_quote.keys).to match_array(
-            ["id", "body", "season", "character", "episode"]
-          )
-
-          # Quote Body
-          expect(received_quote["body"]).to eql(remote_quote.body)
-
-          # Season
-          expect(received_quote["season"].keys).to match_array(
-            ["number", "id"]
-          )
-          expect(received_quote["season"]["number"]).to eql(remote_quote.season.number)
-          expect(received_quote["season"]["id"]).to eql(remote_quote.season.id)
-
-          # Episode
-          expect(received_quote["episode"].keys).to match_array(
-            ["number", "id"]
-          )
-          expect(received_quote["episode"]["number"]).to eql(remote_quote.episode.number)
-          expect(received_quote["episode"]["id"]).to eql(remote_quote.episode.id)
-
-          # Character
-          expect(received_quote["character"].keys).to match_array(
-            ["name", "id"]
-          )
-          expect(received_quote["character"]["name"]).to eql(remote_quote.character.name)
-          expect(received_quote["character"]["id"]).to eql(remote_quote.character.id)
+          check_quote(received_quote, remote_quote)
         end
       end
     end
@@ -75,35 +49,40 @@ RSpec.describe 'quotes', type: :request do
           received_quote = json_body["quote"]
           remote_quote = Quote.find(@demo_quotes.first.id)
 
-          expect(received_quote.keys).to match_array(
-            ["id", "body", "season", "character", "episode"]
-          )
-
-          # Quote Body
-          expect(received_quote["body"]).to eql(remote_quote.body)
-
-          # Season
-          expect(received_quote["season"].keys).to match_array(
-            ["number", "id"]
-          )
-          expect(received_quote["season"]["number"]).to eql(remote_quote.season.number)
-          expect(received_quote["season"]["id"]).to eql(remote_quote.season.id)
-
-          # Episode
-          expect(received_quote["episode"].keys).to match_array(
-            ["number", "id"]
-          )
-          expect(received_quote["episode"]["number"]).to eql(remote_quote.episode.number)
-          expect(received_quote["episode"]["id"]).to eql(remote_quote.episode.id)
-
-          # Character
-          expect(received_quote["character"].keys).to match_array(
-            ["name", "id"]
-          )
-          expect(received_quote["character"]["name"]).to eql(remote_quote.character.name)
-          expect(received_quote["character"]["id"]).to eql(remote_quote.character.id)
+          check_quote(received_quote, remote_quote)
         end
       end
     end
+  end
+
+
+  def check_quote(received, expected)
+    expect(received.keys).to match_array(
+      ["id", "body", "season", "character", "episode"]
+    )
+
+    # Quote Body
+    expect(received["body"]).to eql(expected.body)
+
+    # Season
+    expect(received["season"].keys).to match_array(
+      ["number", "id"]
+    )
+    expect(received["season"]["number"]).to eql(expected.season.number)
+    expect(received["season"]["id"]).to eql(expected.season.id)
+
+    # Episode
+    expect(received["episode"].keys).to match_array(
+      ["number", "id"]
+    )
+    expect(received["episode"]["number"]).to eql(expected.episode.number)
+    expect(received["episode"]["id"]).to eql(expected.episode.id)
+
+    # Character
+    expect(received["character"].keys).to match_array(
+      ["name", "id"]
+    )
+    expect(received["character"]["name"]).to eql(expected.character.name)
+    expect(received["character"]["id"]).to eql(expected.character.id)
   end
 end
