@@ -6,7 +6,7 @@ info:
 paths:
   "/api/v1/quotes":
     get:
-      summary: Gets the quotes
+      summary: Retrieves all quotes
       parameters:
       - name: token
         in: header
@@ -21,7 +21,7 @@ paths:
           content: {}
   "/api/v1/quotes/{id}":
     get:
-      summary: Gets a quote
+      summary: Gets a single quote
       parameters:
       - name: token
         in: header
@@ -39,16 +39,52 @@ paths:
         '404':
           description: quote not found
           content: {}
+  "/api/v1/search":
+    post:
+      summary: Search for quotes
+      parameters:
+      - name: token
+        in: header
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Search successful
+          content: {}
+        '401':
+          description: Unauthorized
+          content: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                search:
+                  type: object
+                  properties:
+                    match_text:
+                      type: string
+                  required:
+                  - match_text
+              required:
+              - search
   "/api/v1/users":
     post:
-      summary: Creates an api token
+      summary: Create an api token
+      description: |
+        Provide an email address to create a user token. You
+        may choose your own token if you so desire, but keep
+        in mind this is a toy app and everything is passed
+        and stored in clear text. Both email and token must
+        be unique within the application.
       parameters: []
       responses:
         '201':
-          description: user created
+          description: User/Token Created
           content: {}
         '422':
-          description: blank email
+          description: Blank email
           content: {}
       requestBody:
         content:
