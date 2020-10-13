@@ -2,7 +2,14 @@ require 'swagger_helper'
 
 RSpec.describe 'users', type: :request do
   path '/api/v1/users' do
-    post 'Creates an api token' do
+    post 'Create an api token' do
+      description <<~EOF
+        Provide an email address to create a user token. You
+        may choose your own token if you so desire, but keep
+        in mind this is a toy app and everything is passed
+        and stored in clear text. Both email and token must
+        be unique within the application.
+      EOF
       consumes 'application/json'
       produces 'application/json'
       parameter name: :user, in: :body, schema: {
@@ -14,7 +21,7 @@ RSpec.describe 'users', type: :request do
         required: [ 'email' ]
       }
 
-      response '201', 'user created' do
+      response '201', 'User/Token Created' do
         let(:user) { { email: 'abe.lincoln@hotmail.com' } }
         run_test! do |response|
           body = JSON.parse(response.body)
@@ -25,7 +32,7 @@ RSpec.describe 'users', type: :request do
         end
       end
 
-      response '422', 'blank email' do
+      response '422', 'Blank email' do
         let(:user) { { email: '' } }
         run_test!
       end
