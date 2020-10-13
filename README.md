@@ -54,21 +54,22 @@ bundle install
 
   - Install PostgreSQL (locally tested with version 12.4)
   - Create local test/dev databases:
-
-    `rails db:create`
-
-    `rails db:migrate`
+```
+rails db:create
+rails db:migrate
+```
 
 * How to run the test suite
 
   - Install gem dependencies via:
-
-    `gem install bundler`
-
-    `bundle install`
+```
+gem install bundler
+bundle install
+```
 - run specs via:
-
-`rspec spec`
+```
+rspec spec
+```
 
 The app is dependent upon an external API, but there is a recorded cassette
 that should allow the specs to pass. Remove it to force an external test.
