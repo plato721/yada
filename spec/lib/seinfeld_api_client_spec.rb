@@ -3,7 +3,16 @@ require 'rails_helper'
 describe SeinfeldApiClient do
   before :all do
     @quote_getter = described_class.new
-    @quote_getter.execute
+    VCR.turn_on!
+    WebMock.enable!
+    VCR.use_cassette('seinfeld_api_index') do
+      @quote_getter.execute
+    end
+  end
+
+  after :all do
+    VCR.turn_off!
+    WebMock.disable!
   end
 
   it "has quotes" do
@@ -37,7 +46,11 @@ describe SeinfeldApiClient do
     it "flags an error if keys are missing" do
       bad_data = { "quotes" => [ { "bad" => "data" } ] }
       allow(@quote_getter).to receive(:data){ bad_data }
-      @quote_getter.execute
+
+      VCR.use_cassette('seinfeld_api_index') do
+        @quote_getter.execute
+      end
+
       expect(@quote_getter.error_message).to match(/unexpected data/)
     end
   end
