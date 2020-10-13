@@ -1,5 +1,5 @@
 module Api::V1
-  class QuotesController < ApplicationController
+  class QuotesController < AuthenticatedController
     def index
       @quotes = Quote.all
       render json: { quotes: @quotes }

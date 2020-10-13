@@ -10,7 +10,7 @@ RSpec.describe 'quotes', type: :request do
     get 'Gets the quotes' do
       parameter name: :token, in: :header, type: :string
       produces 'application/json'
-      consumes 'application/json'
+
       response '200', 'quotes retrieved' do
         let(:token) { @user.token }
         run_test! do |response|
@@ -31,6 +31,11 @@ RSpec.describe 'quotes', type: :request do
 
           check_quote(received_quote, remote_quote)
         end
+      end
+
+      response '401', 'unauthorized' do
+        let(:token) { 'won\'t be there' }
+        run_test!
       end
     end
   end
