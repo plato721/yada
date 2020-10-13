@@ -57,6 +57,12 @@ RSpec.describe 'quotes', type: :request do
           check_quote(received_quote, remote_quote)
         end
       end
+
+      response '404', 'quote not found' do
+        let(:token) { @user.token }
+        let(:id) { Quote.maximum(:id) + 1 }
+        run_test!
+      end
     end
   end
 

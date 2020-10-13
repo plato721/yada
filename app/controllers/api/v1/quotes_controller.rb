@@ -7,7 +7,12 @@ module Api::V1
 
     def show
       @quote = Quote.find_by(id: params[:id])
-      render json: { quote: @quote }
+
+      if @quote
+        render json: { quote: @quote }
+      else
+        render json: { error: "Quote not found" }, status: 404
+      end
     end
   end
 end
