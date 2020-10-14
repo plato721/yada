@@ -9,7 +9,7 @@ class Search::Orchestrator
   end
 
   def search
-    @quotes = Quote.where('body LIKE ?', search_params["match_text"])
+    @quotes = Quote.where('body ILIKE ?', "%#{search_params["match_text"]}%")
     recorder.record(user, search_params["match_text"])
     @quotes
   end
