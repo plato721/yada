@@ -27,4 +27,15 @@ describe Search do
       expect(search.criteria).to eq("")
     end
   end
+
+  context "associations" do
+    it "can have many users" do
+      users = create_list(:user, 2)
+      search = create(:search)
+
+      search.users << users
+
+      expect(search.users).to match_array(users)
+    end
+  end
 end

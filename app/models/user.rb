@@ -1,4 +1,7 @@
 class User < ApplicationRecord
+  has_many :user_searches, class_name: 'UserSearch'
+  has_many :searches, through: :user_searches
+
   validates :email, presence: true, uniqueness: true
   before_validation :downcase_email
 

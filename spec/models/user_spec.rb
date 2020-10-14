@@ -30,6 +30,17 @@ describe User do
       end
     end
 
+    context "associations" do
+      it "can have many searches" do
+        searches = create_list(:search, 2)
+        user = create(:user)
+
+        user.searches << searches
+
+        expect(user.searches).to match_array(searches)
+      end
+    end
+
     context "token" do
       it "is assigned a token" do
         user = User.new(email: "something@test.com")
