@@ -1,7 +1,7 @@
 ---
 openapi: 3.0.1
 info:
-  title: API V1
+  title: Seinfeld API V1
   version: v1
 paths:
   "/api/v1/quotes":
@@ -86,18 +86,27 @@ paths:
         '422':
           description: Blank email
           content: {}
+        '400':
+          description: Bad params
+          content: {}
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                email:
-                  type: string
-                token:
-                  type: string
-              required:
-              - email
+                name: user
+                schema:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                    token:
+                      type: string
+                  required:
+                  - email
+                require:
+                - user
 servers:
 - url: http://{defaultHost}
   variables:

@@ -3,6 +3,13 @@ module Api::V1
     def create
       @quotes = Quote.where('body LIKE ?', search_params[:match_text])
       render json: { quotes: @quotes }
+
+    rescue ActionController::UnpermittedParameters => e
+      render json: { error:  { unknown_parameters: e.message } },
+               status: :bad_request
+    rescue ActionController::ParameterMissing => e
+      render json: { error:  { missing_parameter: e.message } },
+         status: :bad_request
     end
 
     private

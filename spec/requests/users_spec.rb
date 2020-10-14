@@ -15,14 +15,20 @@ RSpec.describe 'users', type: :request do
       parameter name: :user, in: :body, schema: {
         type: :object,
         properties: {
-          email: { type: :string },
-          token: { type: :string }
-        },
-        required: [ 'email' ]
+          name: :user, schema: {
+            type: :object,
+            properties: {
+              email: { type: :string },
+              token: { type: :string }
+            },
+            required: [ 'email' ]
+          },
+          require: [ 'user' ]
+        }
       }
 
       response '201', 'User/Token Created' do
-        let(:user) { { email: 'abe.lincoln@hotmail.com' } }
+        let(:user) { { user: { email: 'abe.lincoln@hotmail.com' }} }
         run_test! do |response|
           body = JSON.parse(response.body)
 
@@ -33,7 +39,12 @@ RSpec.describe 'users', type: :request do
       end
 
       response '422', 'Blank email' do
-        let(:user) { { email: '' } }
+        let(:user) { { user: { email: '' }} }
+        run_test!
+      end
+
+      response '400', 'Bad params' do
+        let(:user){}
         run_test!
       end
     end

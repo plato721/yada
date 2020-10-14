@@ -12,7 +12,7 @@ RSpec.describe 'search', type: :request do
       parameter name: :search, in: :body, schema: {
         type: :object,
         properties: {
-          search: { 
+          search: {
             type: :object,
             properties: {
               match_text: { type: :string }
