@@ -25,7 +25,7 @@ module Api::V1
     def create_searcher
       ::Search::Orchestrator.new(
         search_params: search_params,
-        user: @user
+        user: @current_user
       )
 
     end

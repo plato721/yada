@@ -5,7 +5,7 @@ module Api::V1
     private
 
       def set_user
-        return if @user = find_user
+        return if @current_user = find_user
 
         error_message = "Get a token by posting email to /api/v1/users/create"
         render json: { error: error_message }, status: :unauthorized
