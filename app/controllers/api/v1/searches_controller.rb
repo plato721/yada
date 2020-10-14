@@ -1,8 +1,16 @@
 module Api::V1
   class SearchesController < AuthenticatedController
+
     def create
-      @quotes = Quote.where('body LIKE ?', search_params[:match_text])
-      render json: { quotes: @quotes }
+      searcher = ::Search::Orchestrator.new(search_params)
+      searcher.search
+
+      if !searcher.errors.present?
+        render json: { quotes: searcher.quotes }
+      else
+        render json: { error: { unknown_parameters: searcher.errors }},
+          status: :bad_request
+      end
 
     rescue ActionController::UnpermittedParameters => e
       render json: { error:  { unknown_parameters: e.message } },

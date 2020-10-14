@@ -6,4 +6,12 @@ module Helpers
   def json_body
     JSON.parse(response.body)
   end
+
+  def dummy_user
+    @dummy_user ||= create(:user)
+  end
+
+  def sign_in(user)
+    request.headers["token"] = user.token
+  end
 end
