@@ -25,10 +25,13 @@ describe Api::V1::SearchesController do
 
     post :create, params: params, format: :json
 
+    search_params = ActionController::Parameters.new({match_text: "yada"})
+      .permit(:match_text)
+
     expect(response).to have_http_status(:ok)
     expect(Search::Orchestrator).to have_received(:new).with(
-      ActionController::Parameters.new({match_text: "yada"})
-      .permit(:match_text))
+      search_params: search_params,
+      user: dummy_user)
     expect(searcher).to have_received(:search)
   end
 

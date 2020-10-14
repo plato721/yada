@@ -2,7 +2,7 @@ module Api::V1
   class SearchesController < AuthenticatedController
 
     def create
-      searcher = ::Search::Orchestrator.new(search_params)
+      searcher = create_searcher
       searcher.search
 
       if !searcher.errors.present?
@@ -21,6 +21,14 @@ module Api::V1
     end
 
     private
+
+    def create_searcher
+      ::Search::Orchestrator.new(
+        search_params: search_params,
+        user: @user
+      )
+
+    end
     def search_params
       params.require(:search).permit(:match_text)
     end
