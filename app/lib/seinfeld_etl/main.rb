@@ -13,7 +13,10 @@ module SeinfeldEtl
 
     def execute
       fetcher.execute
-      return log_errors if fetcher.error_message.present?
+      if fetcher.error_message.present?
+        log_errors
+        return false
+      end
 
       # TODO - clear the api caches
       fetcher.data["quotes"].each do |row|

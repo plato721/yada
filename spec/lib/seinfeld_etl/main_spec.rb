@@ -58,4 +58,23 @@ describe SeinfeldEtl::Main do
     result = Character.pluck(:name)
     expect(result).to match_array(["George", "Jerry"])
   end
+
+  context "fetch failure" do
+    before do
+      fetcher = double(:fetcher,
+        execute: nil,
+        error_message: "Something terrible happened.")
+      @main = described_class.new(fetcher: fetcher)
+    end
+
+    it "execution is false" do
+      expect(@main.execute).to be_falsey
+    end
+
+    it "logs errors" do
+      allow(Rails.logger).to receive(:error)
+      @main.execute
+      expect(Rails.logger).to have_received(:error)
+    end
+  end
 end
