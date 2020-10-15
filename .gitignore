@@ -31,3 +31,7 @@
 
 coverage
 
+.generators
+.idea
+.rakeTasks
+
