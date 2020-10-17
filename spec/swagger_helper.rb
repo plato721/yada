@@ -30,6 +30,14 @@ RSpec.configure do |config|
               default: 'localhost:3000'
             }
           }
+        },
+        {
+          url: 'https://yada-yada-yada.herokuapp.com',
+          variables: {
+            defaultHost: {
+              default: 'yada-yada-yada.herokuapp.com'
+            }
+          }
         }
       ]
     }

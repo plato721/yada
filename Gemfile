@@ -20,15 +20,15 @@ gem 'bootsnap', '>= 1.4.2', require: false
 # gem 'rack-cors'
 
 gem 'rswag', '~> 2.3.1'
+gem 'rspec-rails', '~> 3.8.2'
+gem 'rest-client', '~> 2.1.0'
 
 group :development, :test do
-  gem 'rest-client', '~> 2.1.0'
   gem 'pry'
 end
 
 group :test do
   gem 'simplecov', require: false
-  gem 'rspec-rails'
   gem 'factory_bot_rails'
   gem 'shoulda-matchers'
   gem 'database_cleaner-active_record'
