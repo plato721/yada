@@ -38,6 +38,18 @@ describe Search::Recorder do
     expect(user.searches).to include(search)
   end
 
+  it "records the search with an already existing criteria - case insensitively" do
+    Search.where(criteria: "shmoopy").first_or_create
+    search = Search.find_by(criteria: "shmoopy")
+
+    results = build_results(user, scope, { match_text: "Shmoopy" })
+    recorder = described_class.new(results)
+
+    recorder.execute
+
+    expect(user.searches).to include(search)
+  end
+
   it "will create a new user_search entry for a search user is repeating" do
     Search.where(criteria: "shmoopy").first_or_create
     search = Search.find_by(criteria: "shmoopy")

@@ -12,4 +12,11 @@ class Search::Results
   def add_error(error)
     @errors << error
   end
+
+  def cache_key
+    {
+      search_params: search_params.to_h,
+      quotes_updated: Quote.maximum(:updated_at)
+    }
+  end
 end

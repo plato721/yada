@@ -27,7 +27,6 @@ module Api::V1
         search_params: search_params,
         user: @current_user
       )
-
     end
 
     def search_params

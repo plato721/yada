@@ -68,4 +68,46 @@ describe Search::Orchestrator do
     expect(Search::Recorder).to have_received(:new).with(subject.results)
     expect(recorder).to have_received(:execute)
   end
+
+  context "caching" do
+    #https://makandracards.com/makandra/46189-how-to-rails-cache-for-individual-rspec-tests
+    let(:memory_store) { ActiveSupport::Cache.lookup_store(:memory_store) }
+    let(:cache) { Rails.cache }
+
+    before do
+      allow(Rails).to receive(:cache).and_return(memory_store)
+      Rails.cache.clear
+    end
+
+    it "won't search again if cached" do
+      quote = create(:quote)
+      allow(Search::Searcher).to receive(:new).and_call_original
+
+      search_params = { "match_text" => "#{quote.body}" }
+
+      orchestrator = described_class.new(user: user, search_params: search_params)
+      orchestrator.search
+      expect(orchestrator.quotes).to include(quote)
+
+      orchestrator.search
+      expect(orchestrator.quotes).to include(quote)
+
+      expect(Search::Searcher).to have_received(:new).exactly(1).times
+    end
+
+    it "will search again if quotes updates" do
+      quote = create(:quote, body: "down by the bay")
+      search_params = { "match_text" => "#{quote.body}" }
+      orchestrator = described_class.new(user: user, search_params: search_params)
+      orchestrator.search
+
+      expect(orchestrator.quotes).to include(quote)
+
+      quote_2 = create(:quote, body: "down by the bayside")
+      orchestrator.search
+
+      expect(orchestrator.quotes).to include(quote)
+      expect(orchestrator.quotes).to include(quote_2)
+    end
+  end
 end
