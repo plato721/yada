@@ -29,8 +29,18 @@ module Api::V1
       )
 
     end
+
     def search_params
-      params.require(:search).permit(:match_text, filters: {})
+      params.require(:search).permit([
+        :match_text,
+        filters: [
+          only: [],
+          not: []
+        ],
+        sort: [
+          :body
+        ]
+      ])
     end
   end
 end

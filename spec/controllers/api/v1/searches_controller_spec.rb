@@ -26,6 +26,9 @@ describe Api::V1::SearchesController do
         match_text: "yada",
         filters: {
           not: ["Elaine"]
+        },
+        sort: {
+          body: "asc"
         }
       }
     }
@@ -36,9 +39,11 @@ describe Api::V1::SearchesController do
       match_text: "yada",
       filters: {
         not: ["Elaine"]
-       }
-     })
-      .permit(:match_text, filters: {})
+      },
+      sort: {
+        body: "asc"
+      }
+    }).permit([:match_text, filters: {}, sort: {} ])
 
     expect(response).to have_http_status(:ok)
     expect(Search::Orchestrator).to have_received(:new).with(

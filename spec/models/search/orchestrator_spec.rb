@@ -10,8 +10,11 @@ describe Search::Orchestrator do
           "only" => {
             "characters" => ["Jerry"]
            }
+         },
+         "sort" => {
+            "body" => "asc"
          }
-       }).permit(:match_text, filters: {})
+       }).permit(:match_text, filters: {}, sort: {})
          .freeze
   end
 
@@ -41,5 +44,19 @@ describe Search::Orchestrator do
     orchestrator.search
 
     expect(filterer).to have_received(:filter)
+  end
+
+  it "sorts the search" do
+    sorter = Search::Sorter.new(quotes: Quote.all,
+      sort_params: @valid_params["sort"])
+    allow(Search::Sorter).to receive(:new){ sorter }
+    allow(sorter).to receive(:sort)
+
+    orchestrator = described_class.new(
+      user: @user,
+      search_params: @valid_params)
+    orchestrator.search
+
+    expect(sorter).to have_received(:sort)
   end
 end
