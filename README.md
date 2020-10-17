@@ -76,7 +76,7 @@ that should allow the specs to pass. Remove it to force an external test.
 
 * Services (job queues, cache servers, search engines, etc.)
 
-## Notes on the HE Assignment
+## Notes to HE
 
 - Security
 
@@ -90,4 +90,14 @@ potentially be altered based on a revised system.
 
 Anyway, the bottom line is, it's not secure right now.
 
+### Some questionable things
 
+- `rest-client`
+
+It's a dependency for vcr. Except, it's not. There's other options. It's fairly
+heavy depedndency-wise, and if I've already got another client for the quote
+fetching, why not use the same one?
+
+I'd want to research a fairly simple one that would work for all cases. HTTP
+clients are classic for proliferating and causing dependency conflict in large
+apps. And this is how it starts.

@@ -234,9 +234,9 @@ DEPENDENCIES
   pry
   puma (~> 4.1)
   rails (~> 6.0.3, >= 6.0.3.4)
-  rest-client
+  rest-client (~> 2.1.0)
   rspec-rails
-  rswag
+  rswag (~> 2.3.1)
   shoulda-matchers
   simplecov
   spring
