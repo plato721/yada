@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 describe Search::Orchestrator do
-  before do
-    @user = create(:user)
-    @valid_params = ActionController::Parameters
+  let(:user){ create(:user) }
+  let(:search_params) do
+    ActionController::Parameters
       .new({
         "match_text" => "yada",
         "filters" => {
@@ -17,46 +17,55 @@ describe Search::Orchestrator do
        }).permit(:match_text, filters: {}, sort: {})
          .freeze
   end
+  let(:subject){ described_class.new(user: user, search_params: search_params)}
 
-  it "records the search" do
-    recorder = Search::Recorder.new
-    allow(recorder).to receive(:record)
+  it "creates the results object properly" do
+    actual_results = subject.results
 
-    orchestrator = described_class.new(
-      user: @user,
-      search_params: @valid_params,
-      recorder: recorder)
+    expect(actual_results.search_params).to eq(search_params)
+    expect(actual_results.user).to eq(user)
+    expect(actual_results.scope).to eq(Quote.all.includes(:character, :season, :episode))
+  end
 
-    orchestrator.search
+  it "searches with the searcher" do
+    searcher = double(:searcher, execute: nil)
+    allow(Search::Searcher).to receive(:new){ searcher }
 
-    expect(recorder).to have_received(:record).with(@user, "yada")
+    subject.search
+
+    expect(Search::Searcher).to have_received(:new).with(subject.results)
+    expect(searcher).to have_received(:execute)
   end
 
   it "filters the search" do
-    filterer = Search::Filterer.new(quotes: Quote.all,
-      filters: @valid_params["filters"])
+    filterer = double(:filterer)
     allow(Search::Filterer).to receive(:new){ filterer }
-    allow(filterer).to receive(:filter)
+    allow(filterer).to receive(:execute)
 
-    orchestrator = described_class.new(
-      user: @user,
-      search_params: @valid_params)
-    orchestrator.search
+    subject.search
 
-    expect(filterer).to have_received(:filter)
+    expect(Search::Filterer).to have_received(:new).with(subject.results)
+    expect(filterer).to have_received(:execute)
   end
 
   it "sorts the search" do
-    sorter = Search::Sorter.new(quotes: Quote.all,
-      sort_params: @valid_params["sort"])
+    sorter = double(:sorter)
     allow(Search::Sorter).to receive(:new){ sorter }
-    allow(sorter).to receive(:sort)
+    allow(sorter).to receive(:execute)
 
-    orchestrator = described_class.new(
-      user: @user,
-      search_params: @valid_params)
-    orchestrator.search
+    subject.search
 
-    expect(sorter).to have_received(:sort)
+    expect(Search::Sorter).to have_received(:new).with(subject.results)
+    expect(sorter).to have_received(:execute)
+  end
+
+  it "records the search" do
+    recorder = double(:recorder, execute: nil)
+    allow(Search::Recorder).to receive(:new){ recorder }
+
+    subject.search
+
+    expect(Search::Recorder).to have_received(:new).with(subject.results)
+    expect(recorder).to have_received(:execute)
   end
 end

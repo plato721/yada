@@ -1,34 +1,30 @@
 class Search::Filterer
-  attr_reader :quotes, :filters, :errors
-
-  def initialize(quotes:, filters:)
-    @quotes = quotes
-    @filters = filters
-    @errors = []
+  def initialize(results)
+    @results = results
   end
 
-  def filter
-    running_quotes = filter_only(self.quotes)
-    filter_not(running_quotes)
+  def execute
+    filter_only
+    filter_not
   end
 
-  def filter_not(quotes)
-    not_filters = filters["not"]
-    return quotes unless not_filters
-
-    characters = not_filters["characters"]
-    return quotes unless characters
-
-    quotes.where.not(characters: { name: characters })
+  def filters
+    @filters ||= @results.search_params["filters"]
   end
 
-  def filter_only(quotes)
-    only_filters = filters["only"]
-    return quotes unless only_filters
+  def filter_not
+    characters = filters.try(:[], "not").try(:[], "characters")
+    return unless characters
 
-    characters = only_filters["characters"]
-    return quotes unless characters
+    @results.scope = @results.scope
+                      .where.not(characters: { name: characters })
+  end
 
-    quotes.where(characters: { name: characters })
+  def filter_only
+    characters = filters.try(:[], "only").try(:[], "characters")
+    return unless characters
+
+    @results.scope = @results.scope
+                      .where(characters: { name: characters })
   end
 end

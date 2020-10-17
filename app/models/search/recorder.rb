@@ -1,7 +1,15 @@
 class Search::Recorder
-  def record(user, search_criteria)
+  def initialize(results)
+    @results = results
+  end
+
+  def search_criteria
+    @results.search_params["match_text"]
+  end
+
+  def execute
     search = Search.where(criteria: search_criteria)
               .first_or_create
-    user.searches << search
+    @results.user.searches << search
   end
 end

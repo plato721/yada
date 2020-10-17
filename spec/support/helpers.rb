@@ -11,6 +11,26 @@ module Helpers
     @dummy_user ||= create(:user)
   end
 
+  def dummy_search_params
+    ActionController::Parameters.new({
+      match_text: "yada",
+      filters: {
+        not: ["Elaine"]
+      },
+      sort: {
+        body: "asc"
+      }
+    }).permit([:match_text, filters: {}, sort: {} ])
+  end
+
+  def build_search_params(match_text: "", filters: {}, sort: {})
+    ActionController::Parameters.new({
+      match_text: match_text,
+      filters: filters,
+      sort: sort
+    }).permit([:match_text, filters: {}, sort: {} ])
+  end
+
   def sign_in(user)
     request.headers["token"] = user.token
   end

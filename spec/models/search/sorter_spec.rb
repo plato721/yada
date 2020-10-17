@@ -1,22 +1,32 @@
 require 'rails_helper'
 
 describe Search::Sorter do
-  before do
-    quotes = [
+  let(:quotes) do
+    [
       create(:quote, body: "zzz tax evasion"),
       create(:quote, body: "aaa auto"),
       create(:quote, body: "mmm middle of the road")
     ]
-    @quotes = Quote.where(id: quotes.map(&:id))
+  end
+  let(:scope){ Quote.where(id: quotes.map(&:id)) }
+  let(:user){ create(:user) }
+
+  def build_results(user, scope, sort_params)
+    search_params = build_search_params(sort: sort_params)
+    Search::Results.new(
+      user: user,
+      scope: scope,
+      search_params: search_params
+    )
   end
 
   it "sorts by quote body - ascending" do
-    sort_params = { "body" => "asc" }
+    results = build_results(user, scope, { "body" => "asc" })
 
-    sorter = described_class.new(quotes: @quotes, sort_params: sort_params)
-    quotes = sorter.sort
+    sorter = described_class.new(results)
+    sorter.execute
 
-    expect(quotes.pluck(:body)).to eq([
+    expect(results.scope.pluck(:body)).to eq([
       "aaa auto",
       "mmm middle of the road",
       "zzz tax evasion"
@@ -24,12 +34,12 @@ describe Search::Sorter do
   end
 
   it "sorts by quote body - descending" do
-    sort_params = { "body" => "desc" }
+    results = build_results(user, scope, { "body" => "desc" })
 
-    sorter = described_class.new(quotes: @quotes, sort_params: sort_params)
-    quotes = sorter.sort
+    sorter = described_class.new(results)
+    sorter.execute
 
-    expect(quotes.pluck(:body)).to eq([
+    expect(results.scope.pluck(:body)).to eq([
       "zzz tax evasion",
       "mmm middle of the road",
       "aaa auto"
@@ -37,22 +47,22 @@ describe Search::Sorter do
   end
 
   it "errors for non-body sorts" do
-    sort_params = { "character" => "asc" }
+    results = build_results(user, scope, { "character" => "asc" })
 
-    sorter = described_class.new(quotes: @quotes, sort_params: sort_params)
-    quotes = sorter.sort
+    sorter = described_class.new(results)
+    sorter.execute
 
-    expect(sorter.errors).to be_present
+    expect(results.errors).to be_present
   end
 
   it "errors for SQL injection sorts" do
     user = create(:user)
-    sort_params = { "body" => "DROP TABLE USERS" }
+    results = build_results(user, scope, { "body" => "DROP TABLE USERS" })
 
-    sorter = described_class.new(quotes: @quotes, sort_params: sort_params)
-    quotes = sorter.sort
+    sorter = described_class.new(results)
+    sorter.execute
 
-    expect(sorter.errors).to be_present
+    expect(results.errors).to be_present
     expect(User.find_by(id: user.id)).to be_present
   end
 end

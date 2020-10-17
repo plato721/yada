@@ -35,19 +35,9 @@ describe Api::V1::SearchesController do
 
     post :create, params: params, format: :json
 
-    search_params = ActionController::Parameters.new({
-      match_text: "yada",
-      filters: {
-        not: ["Elaine"]
-      },
-      sort: {
-        body: "asc"
-      }
-    }).permit([:match_text, filters: {}, sort: {} ])
-
     expect(response).to have_http_status(:ok)
     expect(Search::Orchestrator).to have_received(:new).with(
-      search_params: search_params,
+      search_params: dummy_search_params,
       user: dummy_user)
     expect(searcher).to have_received(:search)
   end

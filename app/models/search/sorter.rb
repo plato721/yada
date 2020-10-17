@@ -1,19 +1,22 @@
 class Search::Sorter
-  attr_reader :quotes, :sort_params, :errors
-
-  def initialize(quotes:, sort_params:)
-    @quotes = quotes
-    @sort_params = sort_params
-    @errors = []
+  def initialize(results)
+    @results = results
   end
 
-  def sort
-    return quotes unless sort_params.present?
+  def sort_params
+    @results.search_params["sort"]
+  end
 
-    quotes.order(body: sort_params["body"].to_sym)
+  def execute
+    return unless sort_params.present?
+
+    @results.scope = @results.scope
+                        .order(
+                          body: sort_params["body"].to_sym
+                        )
 
   rescue StandardError => e
-      @errors << "Unsupported sort"
+      @results.errors << "Unsupported sort"
       error_message = "#{e.message}\n#{e.backtrace}"
       Rails.logger.debug("Bad sort attempt\n#{error_message}")
       false

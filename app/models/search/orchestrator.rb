@@ -1,56 +1,37 @@
 class Search::Orchestrator
-  attr_reader :search_params, :errors, :quotes, :recorder, :user
+  attr_reader :results
 
-  def initialize(
-      search_params:,
-      user:,
-      recorder: nil,
-      filter_class: nil,
-      sorter_class: nil)
-    @user = user
-    @search_params = search_params
-    @errors = []
-    @recorder = recorder || Search::Recorder.new
-    @filter_class = filter_class || Search::Filterer
-    @sorter_class = sorter_class || Search::Sorter
+  def initialize(search_params:, user:)
+    @results = Search::Results.new(
+      user: user,
+      scope: initial_scope,
+      search_params: search_params
+    )
+  end
+
+  STEPS = [
+    Search::Searcher,
+    Search::Filterer,
+    Search::Sorter,
+    Search::Recorder,
+  ]
+
+  def errors
+    results.errors
+  end
+
+  def quotes
+    results.scope
   end
 
   def search
-    @quotes = initial_search
-    return if errors.present?
-
-    @quotes = apply_filters(@quotes)
-    return if errors.present?
-
-    @quotes = apply_sort(@quotes)
-    return if errors.present?
-
-    recorder.record(user, search_params["match_text"])
-    @quotes
+    STEPS.each do |step_klass|
+      return if errors.present?
+      step_klass.new(results).execute
+    end
   end
 
-  def apply_filters(quotes)
-    filters = search_params["filters"]
-    return quotes unless filters.present?
-
-    filterer = @filter_class.new(quotes: quotes, filters: filters)
-    return filterer.filter unless filterer.errors.present?
-
-    @errors << filterer.errors
-  end
-
-  def apply_sort(quotes)
-    sort_params = search_params["sort"]
-    return quotes unless sort_params.present?
-
-    sorter = @sorter_class.new(quotes: quotes, sort_params: sort_params)
-    return sorter.sort unless sorter.errors.present?
-
-    @errors << sorter.errors
-  end
-
-  def initial_search
+  def initial_scope
     Quote.includes(:character, :episode, :season)
-         .where('body ILIKE ?', "%#{search_params["match_text"]}%")
   end
 end

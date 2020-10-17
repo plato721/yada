@@ -1,10 +1,15 @@
 class Search::Results
-  attr_accessor :quotes
-  attr_reader :user, :search_params
+  attr_accessor :scope
+  attr_reader :user, :search_params, :errors
 
-  def initialize(user, search_params, quotes)
+  def initialize(user:, search_params:, scope:)
     @user = user
     @search_params = search_params
-    @quotes = quotes
+    @scope = scope
+    @errors = []
+  end
+
+  def add_error(error)
+    @errors << error
   end
 end
