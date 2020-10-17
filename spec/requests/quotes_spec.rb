@@ -8,7 +8,7 @@ RSpec.describe 'quotes', type: :request do
 
   path '/api/v1/quotes' do
     get 'Retrieves all quotes' do
-      parameter name: :token, in: :header, type: :string
+      security [ token_auth: [] ]
       produces 'application/json'
 
       response '200', 'quotes retrieved' do
@@ -43,8 +43,8 @@ RSpec.describe 'quotes', type: :request do
   path '/api/v1/quotes/{id}' do
 
     get 'Gets a single quote' do
-      parameter name: :token, in: :header, type: :string
-      parameter name: :id, in: :path, type: :int
+      security [ token_auth: [] ]
+      parameter name: :id, in: :path, type: :integer
       produces 'application/json'
 
       response '200', 'quote retrieved' do

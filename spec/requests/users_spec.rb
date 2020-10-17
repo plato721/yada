@@ -15,7 +15,7 @@ RSpec.describe 'users', type: :request do
       parameter name: :user, in: :body, schema: {
         type: :object,
         properties: {
-          name: :user, schema: {
+          user: {
             type: :object,
             properties: {
               email: { type: :string },
@@ -23,7 +23,7 @@ RSpec.describe 'users', type: :request do
             },
             required: [ 'email' ]
           },
-          require: [ 'user' ]
+          required: [ 'user' ]
         }
       }
 

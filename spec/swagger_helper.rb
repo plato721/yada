@@ -21,6 +21,15 @@ RSpec.configure do |config|
         title: 'Seinfeld API V1',
         version: 'v1'
       },
+      components: {
+        securitySchemes: {
+          token_auth: {
+            type: :apiKey,
+            in: :header,
+            name: :token
+          },
+        }
+      },
       paths: {},
       servers: [
         {

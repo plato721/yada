@@ -3,15 +3,18 @@ openapi: 3.0.1
 info:
   title: Seinfeld API V1
   version: v1
+components:
+  securitySchemes:
+    token_auth:
+      type: apiKey
+      in: header
+      name: token
 paths:
   "/api/v1/quotes":
     get:
       summary: Retrieves all quotes
-      parameters:
-      - name: token
-        in: header
-        schema:
-          type: string
+      security:
+      - token_auth: []
       responses:
         '200':
           description: quotes retrieved
@@ -22,16 +25,14 @@ paths:
   "/api/v1/quotes/{id}":
     get:
       summary: Gets a single quote
+      security:
+      - token_auth: []
       parameters:
-      - name: token
-        in: header
-        schema:
-          type: string
       - name: id
         in: path
         required: true
         schema:
-          type: int
+          type: integer
       responses:
         '200':
           description: quote retrieved
@@ -42,11 +43,9 @@ paths:
   "/api/v1/search":
     post:
       summary: Search for quotes
-      parameters:
-      - name: token
-        in: header
-        schema:
-          type: string
+      security:
+      - token_auth: []
+      parameters: []
       responses:
         '200':
           description: Search successful
@@ -65,6 +64,28 @@ paths:
                   properties:
                     match_text:
                       type: string
+                    filters:
+                      type: object
+                      properties:
+                        only:
+                          type: object
+                          properties:
+                            character:
+                              type: array
+                              items:
+                                type: string
+                        not:
+                          type: object
+                          properties:
+                            character:
+                              type: array
+                              items:
+                                type: string
+                    sort:
+                      type: object
+                      properties:
+                        body:
+                          type: string
                   required:
                   - match_text
               required:
@@ -95,8 +116,7 @@ paths:
             schema:
               type: object
               properties:
-                name: user
-                schema:
+                user:
                   type: object
                   properties:
                     email:
@@ -105,7 +125,7 @@ paths:
                       type: string
                   required:
                   - email
-                require:
+                required:
                 - user
 servers:
 - url: http://{defaultHost}

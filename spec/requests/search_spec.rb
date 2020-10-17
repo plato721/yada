@@ -8,14 +8,45 @@ RSpec.describe 'search', type: :request do
 
   path '/api/v1/search' do
     post 'Search for quotes' do
-      parameter name: :token, in: :header, type: :string
+      security [ token_auth: [] ]
       parameter name: :search, in: :body, schema: {
         type: :object,
         properties: {
           search: {
             type: :object,
             properties: {
-              match_text: { type: :string }
+              match_text: { type: :string },
+              filters: {
+                type: :object,
+                properties: {
+                  only: {
+                    type: :object,
+                    properties: {
+                      character: {
+                        type: :array,
+                        items: { type: :string }
+                      }
+                    }
+                  },
+                  not: {
+                    type: :object,
+                    properties: {
+                      character: {
+                        type: :array,
+                        items: { type: :string }
+                      }
+                    }
+                  }
+                }
+              },
+              sort: {
+                type: :object,
+                properties: {
+                  body: {
+                    type: :string
+                  }
+                }
+              }
             },
             required: [ 'match_text' ]
           }
@@ -29,6 +60,7 @@ RSpec.describe 'search', type: :request do
         let(:token) { @user.token }
         let(:match_text) { { match_text: @demo_quotes.first.body } }
         let(:search) { { search: match_text } }
+        let(:filter) { {} }
         run_test! do |response|
           quotes = json_body["quotes"]
           expect(quotes.length).to eql(1)
