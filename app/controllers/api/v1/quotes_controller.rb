@@ -1,13 +1,13 @@
 module Api::V1
   class QuotesController < AuthenticatedController
     def index
-      @quotes = Quote.all
+      @quotes = Quote.includes(:season, :character, :episode)
       render json: { quotes: @quotes }
     end
 
     def show
-      @quote = Quote.find_by(id: params[:id])
-
+      @quote = Quote.includes(:season, :character, :episode)
+                    .find_by(id: params[:id])
       if @quote
         render json: { quote: @quote }
       else
