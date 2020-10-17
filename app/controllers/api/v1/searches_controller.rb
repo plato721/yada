@@ -30,7 +30,7 @@ module Api::V1
 
     end
     def search_params
-      params.require(:search).permit(:match_text)
+      params.require(:search).permit(:match_text, filters: {})
     end
   end
 end

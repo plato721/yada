@@ -21,12 +21,24 @@ describe Api::V1::SearchesController do
     )
     allow(Search::Orchestrator).to receive(:new){ searcher }
 
-    params = { search: { match_text: "yada" }}
+    params = {
+      search: {
+        match_text: "yada",
+        filters: {
+          not: ["Elaine"]
+        }
+      }
+    }
 
     post :create, params: params, format: :json
 
-    search_params = ActionController::Parameters.new({match_text: "yada"})
-      .permit(:match_text)
+    search_params = ActionController::Parameters.new({
+      match_text: "yada",
+      filters: {
+        not: ["Elaine"]
+       }
+     })
+      .permit(:match_text, filters: {})
 
     expect(response).to have_http_status(:ok)
     expect(Search::Orchestrator).to have_received(:new).with(
