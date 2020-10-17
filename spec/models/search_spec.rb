@@ -19,5 +19,12 @@ describe Search do
       expect(duplicate.save).to be_falsey
       expect(duplicate).to_not be_valid
     end
+
+    it "doesn't crash on empty criteria" do
+      search = Search.new(criteria: nil)
+
+      expect{ search.save }.to_not raise_error
+      expect(search.criteria).to eq("")
+    end
   end
 end
