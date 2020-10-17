@@ -37,6 +37,7 @@ describe SeinfeldApiClient do
     it "flags an error if keys are missing" do
       bad_data = { "quotes" => [ { "bad" => "data" } ] }
       allow(@quote_getter).to receive(:data){ bad_data }
+      @quote_getter.execute
       expect(@quote_getter.error_message).to match(/unexpected data/)
     end
   end

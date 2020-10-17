@@ -26,7 +26,7 @@ class SeinfeldApiClient
   end
 
   def validate_data
-    keys_found = data["quotes"].first
+    keys_found = data["quotes"].first.keys
     ["quote", "author", "season", "episode", "image"].each do |expected_key|
       if keys_found.none? { |actual_key| actual_key == expected_key }
         @error_message = "Received unexpected data"
