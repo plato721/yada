@@ -4,11 +4,11 @@ This is currently a toy-grade app for searching what are alleged
 to be quotes from the Seinfeld television series. This is
 dependent on an [external API](https://seinfeld-quotes.herokuapp.com/) and no accuracy is guaranteed. This
 is done in good fun for educational purposes, so hopefully falls
-within the fair use doctrine of intellectual property.
+within the fair use doctrine of intellectual property law.
 
 ## Using the API
 
-The app is currently deployed at [https://yada-yada-yada.herokuapp.com/](https://yada-yada-yada.herokuapp.com/) and
+The app is currently deployed `https://yada-yada-yada.herokuapp.com` and
 there you will find interactive documentation at [/api-docs](https://yada-yada-yada.herokuapp.com/api-docs), but
 below are a few notes to get you started.
 
@@ -38,6 +38,9 @@ Elaine, etc.), and sorting to the body of the quote itself.
 - Once again, please check out more detail via the interactive documentation found at:
 
 [https://yada-yada-yada.herokuapp.com/api-docs](https://yada-yada-yada.herokuapp.com/api-docs)
+
+*Important note* Be sure to select the `herokuapp.com` url in the Servers dropdown to test the endpoints in the
+Swagger docs.
 
 ## Running the App locally
 
