@@ -111,7 +111,7 @@ Anyway, the bottom line is, it's not secure right now.
 
 - `rest-client`
 
-It's a dependency for vcr. Except, it's not. There's other options. It's fairly
+It's a dependency for vcr. Except, it's not. There are other options. It's fairly
 heavy depedndency-wise, and if I've already got another client for the quote
 fetching, why not use the same one?
 
