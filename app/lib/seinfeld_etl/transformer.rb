@@ -1,12 +1,14 @@
 module SeinfeldEtl
   class Transformer
     def objects_transformers
-      [
-        ["author", AuthorTransformer.new],
-        ["episode", EpisodeTransformer.new],
-        ["season", SeasonTransformer.new],
-        ["quote", QuoteTransformer.new]
-      ]
+      @objects_transformers ||= begin
+        [
+          ["author", AuthorTransformer.new],
+          ["episode", EpisodeTransformer.new],
+          ["season", SeasonTransformer.new],
+          ["quote", QuoteTransformer.new]
+        ]
+      end
     end
 
     def transform(row)
