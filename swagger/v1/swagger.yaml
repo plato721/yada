@@ -70,14 +70,14 @@ paths:
                         only:
                           type: object
                           properties:
-                            character:
+                            characters:
                               type: array
                               items:
                                 type: string
                         not:
                           type: object
                           properties:
-                            character:
+                            characters:
                               type: array
                               items:
                                 type: string

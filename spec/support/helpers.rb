@@ -15,7 +15,9 @@ module Helpers
     ActionController::Parameters.new({
       match_text: "yada",
       filters: {
-        not: ["Elaine"]
+        not: {
+          characters: ["Elaine"]
+        }
       },
       sort: {
         body: "asc"

@@ -22,7 +22,7 @@ RSpec.describe 'search', type: :request do
                   only: {
                     type: :object,
                     properties: {
-                      character: {
+                      characters: {
                         type: :array,
                         items: { type: :string }
                       }
@@ -31,7 +31,7 @@ RSpec.describe 'search', type: :request do
                   not: {
                     type: :object,
                     properties: {
-                      character: {
+                      characters: {
                         type: :array,
                         items: { type: :string }
                       }
