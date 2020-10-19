@@ -61,8 +61,7 @@ this json:
 
 [https://yada-yada-yada.herokuapp.com/api-docs](https://yada-yada-yada.herokuapp.com/api-docs)
 
-*Important note* Be sure to select the `herokuapp.com` url in the Servers dropdown to test the endpoints in the
-Swagger docs.
+*Important note* Be sure to select the appropriate url for testing the endpoints, which is the  `herokuapp.com` url if you are connecting to the Heroku url above.
 
 ## Running the App locally
 
