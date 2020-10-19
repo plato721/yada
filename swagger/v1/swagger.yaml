@@ -53,6 +53,9 @@ paths:
         '401':
           description: Unauthorized
           content: {}
+        '400':
+          description: Bad search params
+          content: {}
       requestBody:
         content:
           application/json:

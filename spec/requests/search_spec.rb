@@ -73,6 +73,23 @@ RSpec.describe 'search', type: :request do
         let(:search){}
         run_test!
       end
+
+      response '400', 'Bad search params' do
+        let(:token) { @user.token }
+        let(:search) do
+          { "search": {
+              "match_text":"hello",
+              "filters": [ "I doubt it likes this very much" ],
+              "sort": {
+                "body": "desc"
+              }
+            }
+          }
+        end
+        run_test! do |response|
+          expect(response).to have_http_status(400)
+        end
+      end
     end
   end
 end

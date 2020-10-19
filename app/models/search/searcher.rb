@@ -13,9 +13,10 @@ class Search::Searcher
 
   rescue StandardError => e
     message = "Bad search attempted"
-    full_message = "#{message}\n#{e.message}\n#{e.backtrace}"
+    backtrace = e.backtrace.join("\n")
+    full_message = "#{message}\n#{e.message}\n#{backtrace}"
 
     @results.errors << message
-    Rails.logger.error { message }
+    Rails.logger.error { full_message }
   end
 end

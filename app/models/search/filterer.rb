@@ -6,6 +6,13 @@ class Search::Filterer
   def execute
     filter_only
     filter_not
+  rescue StandardError => e
+    message = "Bad filter attempted"
+    backtrace = e.backtrace.join("\n")
+    full_message = "#{message}\n#{e.message}\n#{backtrace}"
+
+    @results.errors << message
+    Rails.logger.error { full_message }
   end
 
   def filters
