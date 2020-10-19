@@ -33,8 +33,12 @@ module Api::V1
       params.require(:search).permit([
         :match_text,
         filters: [
-          only: [],
-          not: []
+          only: {
+            characters: []
+          },
+          not: {
+            characters: []
+          }
         ],
         sort: [
           :body

@@ -25,7 +25,9 @@ describe Api::V1::SearchesController do
       search: {
         match_text: "yada",
         filters: {
-          not: ["Elaine"]
+          not: {
+            characters: ["Elaine"]
+          }
         },
         sort: {
           body: "asc"

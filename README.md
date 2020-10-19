@@ -20,7 +20,13 @@ the body of a json payload.
 A token will be sent in the payload of the reply if the email address
 was unique. No validation of the email will be performed, nor will an email be sent for confirmation.
 
-Once a token is received, it may be passed as a header param in calls to all other endpoints. Within the interactive
+Once a token is received, it may be passed as a header param in calls to all other endpoints:
+
+```
+{ token: <token> }
+```
+
+Within the interactive
 docs, you may click on the lock on any endpoint or at the top of the list, provide your token, and the token
 param will be passed automatically.
 
@@ -32,8 +38,24 @@ param will be passed automatically.
 
 `post /search, { match_text: <some text that may be in the quotes> }`
 
-A `filters:` object is also accepted, along with a `sort:`. Filtering is currently limited to character name (Jerry,
-Elaine, etc.), and sorting to the body of the quote itself.
+A `filters:` object is also accepted, along with a `sort:`. Filtering is currently limited to character name (Jerry, Elaine, etc.), and sorting to the body of the quote itself. Example, to find all
+quotes that contain "hello" not said by Jerry, sorted in descending order, post
+this json:
+```
+{ "search": {
+    "match_text":"hello",
+    "filters": {
+      "not": {
+        "characters": ["Jerry"]
+      }
+    },
+    "sort": {
+      "body": "desc"
+    }
+  }
+}
+```
+
 
 - Once again, please check out more detail via the interactive documentation found at:
 
