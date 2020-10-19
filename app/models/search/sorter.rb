@@ -16,9 +16,11 @@ class Search::Sorter
                         )
 
   rescue StandardError => e
-      @results.errors << "Unsupported sort"
-      error_message = "#{e.message}\n#{e.backtrace}"
-      Rails.logger.debug("Bad sort attempt\n#{error_message}")
-      false
+    message = "Bad sort attempted"
+    backtrace = e.backtrace.join("\n")
+    full_message = "#{message}\n#{e.message}\n#{backtrace}"
+
+    @results.errors << message
+    Rails.logger.error { full_message }
   end
 end
