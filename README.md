@@ -8,7 +8,7 @@ within the fair use doctrine of intellectual property law.
 
 ## Using the API
 
-The app is currently deployed `https://yada-yada-yada.herokuapp.com` and
+The app is currently deployed at `https://yada-yada-yada.herokuapp.com` and
 there you will find interactive documentation at [/api-docs](https://yada-yada-yada.herokuapp.com/api-docs), but
 below are a few notes to get you started.
 
