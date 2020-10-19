@@ -146,6 +146,12 @@ Yes, there are a number of tests, but I'd say it's far from complete. Search res
 instance. Some say things like that are "testing the framework." Well, I would say that it's ensuring using the
 framework is getting the results you want.
 
+- `rescue` from `StandardError`
+
+Definitely not the best practice here. Yes, better than rescuing from `Exception`
+or leaving blank. There's some things like this from trying to get this out the
+door while not completely neglecting non-ideal code flows.
+
 ### Various notables
 
 - rswag
