@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe SearchSupport::Results do
+describe SearchSupport::ResultsBuilder do
   let(:user) { create :user }
   let(:scope) { Quote.all }
   let(:search_params) do
@@ -24,18 +24,18 @@ describe SearchSupport::Results do
     end.to raise_error NoMethodError
   end
 
-  it 'has a writeable search scope' do
+  it 'has a writeable search results' do
     quote = create(:quote, body: 'aaaaaaaa')
-    expect(results.scope).to eq(scope)
-    expect(results.scope).to include(quote)
+    expect(results.results).to eq(scope)
+    expect(results.results).to include(quote)
 
-    results.scope = results.scope.where(body: 'zzzzzz')
+    results.results = results.results.where(body: 'zzzzzz')
 
-    expect(results.scope).to_not include(quote)
+    expect(results.results).to_not include(quote)
   end
 
   it 'has error storage' do
-    results.add_error 'this did not go well'
+    results.errors = 'this did not go well'
     expect(results.errors).to include('this did not go well')
   end
 end

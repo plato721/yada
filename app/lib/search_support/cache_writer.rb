@@ -2,16 +2,14 @@
 
 module SearchSupport
   class CacheWriter
-    def initialize(results)
-      @results = results
+    include SearchSupport::ExceptionHandler
+
+    class << self
+      def execute(results_builder)
+        Rails.cache.write(results_builder, results_builder.results)
+      rescue StandardError => e
+        record_errors_and_terminate(e, results_builder)
+      end
     end
-
-    def execute
-      Rails.cache.write(results, results.scope)
-    end
-
-    private
-
-    attr_reader :results
   end
 end

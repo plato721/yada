@@ -8,7 +8,7 @@ describe SearchSupport::Recorder do
 
   def build_results(user, scope, match_text_params)
     search_params = build_search_params(match_text_params)
-    SearchSupport::Results.new(
+    SearchSupport::ResultsBuilder.new(
       user: user,
       scope: scope,
       search_params: search_params
@@ -18,10 +18,9 @@ describe SearchSupport::Recorder do
   it 'records the search given criteria and a user' do
     Search.find_by(criteria: 'yada')&.destroy # just in case
 
-    results = build_results(user, scope, { match_text: 'yada' })
-    recorder = described_class.new(results)
+    results_builder = build_results(user, scope, { match_text: 'yada' })
 
-    recorder.execute
+    described_class.execute(results_builder)
 
     search = Search.find_by(criteria: 'yada')
     expect(search).to be_a(Search)
@@ -32,10 +31,9 @@ describe SearchSupport::Recorder do
     Search.where(criteria: 'shmoopy').first_or_create
     search = Search.find_by(criteria: 'shmoopy')
 
-    results = build_results(user, scope, { match_text: 'shmoopy' })
-    recorder = described_class.new(results)
+    results_builder = build_results(user, scope, { match_text: 'shmoopy' })
 
-    recorder.execute
+    described_class.execute(results_builder)
 
     expect(user.searches).to include(search)
   end
@@ -44,10 +42,9 @@ describe SearchSupport::Recorder do
     Search.where(criteria: 'shmoopy').first_or_create
     search = Search.find_by(criteria: 'shmoopy')
 
-    results = build_results(user, scope, { match_text: 'Shmoopy' })
-    recorder = described_class.new(results)
+    results_builder = build_results(user, scope, { match_text: 'Shmoopy' })
 
-    recorder.execute
+    described_class.execute(results_builder)
 
     expect(user.searches).to include(search)
   end
@@ -59,11 +56,10 @@ describe SearchSupport::Recorder do
     user = create(:user)
     user.searches << search
 
-    results = build_results(user, scope, { match_text: 'shmoopy' })
-    recorder = described_class.new(results)
+    results_builder = build_results(user, scope, { match_text: 'shmoopy' })
 
     expect do
-      recorder.execute
+      described_class.execute(results_builder)
     end.to change { UserSearch.where(user: user, search: search).count }.by(1)
   end
 end

@@ -22,15 +22,6 @@ describe SearchSupport::Filterer do
   end
   let(:scope) { Quote.includes(:character).where(id: quotes.map(&:id)) }
 
-  def build_results(user, scope, filter_params)
-    search_params = build_search_params(filter_params)
-    SearchSupport::Results.new(
-      user: user,
-      scope: scope,
-      search_params: search_params
-    )
-  end
-
   context 'character filtering -' do
     it 'filters for only' do
       filters = {
@@ -38,13 +29,12 @@ describe SearchSupport::Filterer do
           'characters' => ['George']
         }
       }
-      results = build_results(user, scope, filters: filters)
+      results_builder = build_results(user, scope, filters: filters)
 
-      filterer = described_class.new(results)
-      filterer.execute
+      results = described_class.execute(results_builder)
 
-      expect(results.errors).to be_empty
-      expect(results.scope.distinct.pluck(:name)).to eq(['George'])
+      expect(results_builder.errors).to be_blank
+      expect(results.distinct.pluck(:name)).to eq(['George'])
     end
 
     it 'filters for not' do
@@ -53,13 +43,12 @@ describe SearchSupport::Filterer do
           'characters' => ['George']
         }
       }
-      results = build_results(user, scope, filters: filters)
+      results_builder = build_results(user, scope, filters: filters)
 
-      filterer = described_class.new(results)
-      filterer.execute
+      results = described_class.execute(results_builder)
 
-      expect(results.errors).to be_empty
-      expect(results.scope.distinct.pluck(:name)).to match_array(['Paul'])
+      expect(results_builder.errors).to be_blank
+      expect(results.distinct.pluck(:name)).to match_array(['Paul'])
     end
   end
 end

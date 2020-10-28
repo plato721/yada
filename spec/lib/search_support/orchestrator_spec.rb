@@ -21,54 +21,36 @@ describe SearchSupport::Orchestrator do
   end
   let(:subject) { described_class.new(user: user, search_params: search_params) }
 
-  it 'creates the results object properly' do
-    actual_results = subject.results
-
-    expect(actual_results.search_params).to eq(search_params)
-    expect(actual_results.user).to eq(user)
-    expect(actual_results.scope).to eq(Quote.all.includes(:character, :season, :episode))
-  end
-
   it 'searches with the searcher' do
-    searcher = double(:searcher, execute: nil)
-    allow(SearchSupport::Searcher).to receive(:new) { searcher }
+    allow(SearchSupport::Searcher).to receive(:execute)
 
     subject.search
 
-    expect(SearchSupport::Searcher).to have_received(:new).with(subject.results)
-    expect(searcher).to have_received(:execute)
+    expect(SearchSupport::Searcher).to have_received(:execute)
   end
 
   it 'filters the search' do
-    filterer = double(:filterer)
-    allow(SearchSupport::Filterer).to receive(:new) { filterer }
-    allow(filterer).to receive(:execute)
+    allow(SearchSupport::Filterer).to receive(:execute)
 
     subject.search
 
-    expect(SearchSupport::Filterer).to have_received(:new).with(subject.results)
-    expect(filterer).to have_received(:execute)
+    expect(SearchSupport::Filterer).to have_received(:execute)
   end
 
   it 'sorts the search' do
-    sorter = double(:sorter)
-    allow(SearchSupport::Sorter).to receive(:new) { sorter }
-    allow(sorter).to receive(:execute)
+    allow(SearchSupport::Sorter).to receive(:execute)
 
     subject.search
 
-    expect(SearchSupport::Sorter).to have_received(:new).with(subject.results)
-    expect(sorter).to have_received(:execute)
+    expect(SearchSupport::Sorter).to have_received(:execute)
   end
 
   it 'records the search' do
-    recorder = double(:recorder, execute: nil)
-    allow(SearchSupport::Recorder).to receive(:new) { recorder }
+    allow(SearchSupport::Recorder).to receive(:execute)
 
     subject.search
 
-    expect(SearchSupport::Recorder).to have_received(:new).with(subject.results)
-    expect(recorder).to have_received(:execute)
+    expect(SearchSupport::Recorder).to have_received(:execute)
   end
 
   context 'caching' do
@@ -83,33 +65,33 @@ describe SearchSupport::Orchestrator do
 
     it "won't search again if cached" do
       quote = create(:quote)
-      allow(SearchSupport::Searcher).to receive(:new).and_call_original
+      allow(SearchSupport::Searcher).to receive(:execute).and_call_original
 
       search_params = { 'match_text' => quote.body.to_s }
 
       orchestrator = described_class.new(user: user, search_params: search_params)
-      orchestrator.search
-      expect(orchestrator.quotes).to include(quote)
+      results = orchestrator.search
+      expect(results).to include(quote)
 
-      orchestrator.search
-      expect(orchestrator.quotes).to include(quote)
+      updated_results = orchestrator.search
+      expect(updated_results).to include(quote)
 
-      expect(SearchSupport::Searcher).to have_received(:new).exactly(1).times
+      expect(SearchSupport::Searcher).to have_received(:execute).exactly(1).times
     end
 
     it 'will search again if quotes updates' do
       quote = create(:quote, body: 'down by the bay')
       search_params = { 'match_text' => quote.body.to_s }
       orchestrator = described_class.new(user: user, search_params: search_params)
-      orchestrator.search
+      results = orchestrator.search
 
-      expect(orchestrator.quotes).to include(quote)
+      expect(results).to include(quote)
 
       quote_2 = create(:quote, body: 'down by the bayside')
-      orchestrator.search
+      updated_results = orchestrator.search
 
-      expect(orchestrator.quotes).to include(quote)
-      expect(orchestrator.quotes).to include(quote_2)
+      expect(updated_results).to include(quote)
+      expect(updated_results).to include(quote_2)
     end
   end
 end

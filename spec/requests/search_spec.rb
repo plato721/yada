@@ -81,7 +81,7 @@ RSpec.describe 'search', type: :request do
         let(:search) do
           { "search": {
             "match_text": 'hello',
-            "filters": ['I doubt it likes this very much'],
+            "filters": [{'I doubt it likes this'=>'very much'}],
             "sort": {
               "body": 'desc'
             }

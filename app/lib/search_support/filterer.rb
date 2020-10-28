@@ -2,42 +2,35 @@
 
 module SearchSupport
   class Filterer
-    def initialize(results)
-      @results = results
-    end
+    include SearchSupport::ExceptionHandler
 
-    def execute
-      filter_only
-      filter_not
-    rescue StandardError => e
-      message = 'Bad filter attempted'
-      backtrace = e.backtrace.join("\n")
-      full_message = "#{message}\n#{e.message}\n#{backtrace}"
+    class << self
+      def execute(results_builder)
+        filters = results_builder.search_params['filters']
+        return unless filters.present?
 
-      @results.errors << message
-      Rails.logger.error { full_message }
-    end
+        results = filter_only(filters, results_builder.results)
+        results = filter_not(filters, results)
+        results_builder.results = results
+      rescue StandardError => e
+        record_errors_and_terminate(e, results_builder)
+      end
 
-    private
+      private
 
-    def filters
-      @filters ||= @results.search_params['filters']
-    end
+      def filter_not(filters, results)
+        characters = filters.try(:[], 'not').try(:[], 'characters')
+        return results unless characters
 
-    def filter_not
-      characters = filters.try(:[], 'not').try(:[], 'characters')
-      return unless characters
+        results.where.not(characters: { name: characters })
+      end
 
-      @results.scope = @results.scope
-                               .where.not(characters: { name: characters })
-    end
+      def filter_only(filters, results)
+        characters = filters.try(:[], 'only').try(:[], 'characters')
+        return results unless characters
 
-    def filter_only
-      characters = filters.try(:[], 'only').try(:[], 'characters')
-      return unless characters
-
-      @results.scope = @results.scope
-                               .where(characters: { name: characters })
+        results.where(characters: { name: characters })
+      end
     end
   end
 end
