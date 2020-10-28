@@ -58,7 +58,7 @@ describe Api::V1::SearchesController do
     post :create, params: params, format: :json
 
     expect(response).to have_http_status(:bad_request)
-    expect(json_body['error']).to be_present
+    expect(json_body['message']).to be_present
   end
 
   context 'basic integration for sanity' do

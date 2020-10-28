@@ -11,7 +11,7 @@ module Api
         return if @current_user = find_user
 
         error_message = 'Get a token by posting email to /api/v1/users/create'
-        render json: { error: error_message }, status: :unauthorized
+        json_response({ message: error_message },:unauthorized)
       end
 
       def find_user
