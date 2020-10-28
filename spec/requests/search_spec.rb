@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'swagger_helper'
 
 RSpec.describe 'search', type: :request do
@@ -8,7 +10,7 @@ RSpec.describe 'search', type: :request do
 
   path '/api/v1/search' do
     post 'Search for quotes' do
-      security [ token_auth: [] ]
+      security [token_auth: []]
       parameter name: :search, in: :body, schema: {
         type: :object,
         properties: {
@@ -48,10 +50,10 @@ RSpec.describe 'search', type: :request do
                 }
               }
             },
-            required: [ 'match_text' ]
+            required: ['match_text']
           }
         },
-        required: [ 'search' ]
+        required: ['search']
       }
       consumes 'application/json'
       produces 'application/json'
@@ -61,16 +63,16 @@ RSpec.describe 'search', type: :request do
         let(:match_text) { { match_text: @demo_quotes.first.body } }
         let(:search) { { search: match_text } }
         let(:filter) { {} }
-        run_test! do |response|
-          quotes = json_body["quotes"]
+        run_test! do |_response|
+          quotes = json_body['quotes']
           expect(quotes.length).to eql(1)
-          expect(quotes.first["id"]).to eq(@demo_quotes.first.id)
+          expect(quotes.first['id']).to eq(@demo_quotes.first.id)
         end
       end
 
       response '401', 'Unauthorized' do
         let(:token) { 'won\'t be there' }
-        let(:search){}
+        let(:search) {}
         run_test!
       end
 
@@ -78,13 +80,12 @@ RSpec.describe 'search', type: :request do
         let(:token) { @user.token }
         let(:search) do
           { "search": {
-              "match_text":"hello",
-              "filters": [ "I doubt it likes this very much" ],
-              "sort": {
-                "body": "desc"
-              }
+            "match_text": 'hello',
+            "filters": ['I doubt it likes this very much'],
+            "sort": {
+              "body": 'desc'
             }
-          }
+          } }
         end
         run_test! do |response|
           expect(response).to have_http_status(400)

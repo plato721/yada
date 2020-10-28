@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 describe UserSearch do
-  it "takes a user and a search" do
+  it 'takes a user and a search' do
     user = create(:user)
     search = create(:search)
 

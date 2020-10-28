@@ -27,7 +27,7 @@ RSpec.configure do |config|
             type: :apiKey,
             in: :header,
             name: :token
-          },
+          }
         }
       },
       paths: {},

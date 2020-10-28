@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 describe Quote do
@@ -7,10 +9,10 @@ describe Quote do
   it { is_expected.to validate_presence_of(:body) }
   it { is_expected.to validate_uniqueness_of(:body) }
 
-  it "has a factory" do
-    expect{
+  it 'has a factory' do
+    expect  do
       @quotes = create_list(:quote, 2)
-    }.to change{ Quote.count }.by(2)
+    end.to change { Quote.count }.by(2)
 
     quote = @quotes.first
 

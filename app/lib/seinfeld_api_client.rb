@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 class SeinfeldApiClient
   attr_reader :data, :error_message
 
-  def initialize(options={})
+  def initialize(options = {})
     @options = default_options.merge(options)
   end
 
@@ -22,14 +24,14 @@ class SeinfeldApiClient
     @data = nil
 
     backtrace = e.backtrace.join("\n")
-    Rails.logger.error { "#{@error_message}\n#{backtrace}"}
+    Rails.logger.error { "#{@error_message}\n#{backtrace}" }
   end
 
   def validate_data
-    keys_found = data["quotes"].first.keys
-    ["quote", "author", "season", "episode", "image"].each do |expected_key|
+    keys_found = data['quotes'].first.keys
+    %w[quote author season episode image].each do |expected_key|
       if keys_found.none? { |actual_key| actual_key == expected_key }
-        @error_message = "Received unexpected data"
+        @error_message = 'Received unexpected data'
         return false
       end
     end
@@ -37,6 +39,6 @@ class SeinfeldApiClient
     @error_message = "#{e.class}: e.message"
 
     backtrace = e.backtrace.join("\n")
-    Rails.logger.error { "#{@error_message}\n#{backtrace}"}
+    Rails.logger.error { "#{@error_message}\n#{backtrace}" }
   end
 end

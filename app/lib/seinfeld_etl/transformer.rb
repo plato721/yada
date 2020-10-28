@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 module SeinfeldEtl
   class Transformer
     def objects_transformers
       @objects_transformers ||= begin
         [
-          ["author", AuthorTransformer.new],
-          ["episode", EpisodeTransformer.new],
-          ["season", SeasonTransformer.new],
-          ["quote", QuoteTransformer.new]
+          ['author', AuthorTransformer.new],
+          ['episode', EpisodeTransformer.new],
+          ['season', SeasonTransformer.new],
+          ['quote', QuoteTransformer.new]
         ]
       end
     end
@@ -20,25 +22,25 @@ module SeinfeldEtl
 
   class AuthorTransformer
     def transform(value)
-      [ :character_id, Character.find_or_create_by(name: value).id ]
+      [:character_id, Character.find_or_create_by(name: value).id]
     end
   end
 
   class EpisodeTransformer
     def transform(value)
-      [ :episode_id, Episode.find_or_create_by(number: value.to_i).id ]
+      [:episode_id, Episode.find_or_create_by(number: value.to_i).id]
     end
   end
 
   class SeasonTransformer
     def transform(value)
-      [ :season_id, Season.find_or_create_by(number: value.to_i).id ]
+      [:season_id, Season.find_or_create_by(number: value.to_i).id]
     end
   end
 
   class QuoteTransformer
     def transform(value)
-      [ :body, value ]
+      [:body, value]
     end
   end
 end

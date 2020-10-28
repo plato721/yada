@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Quote < ApplicationRecord
   belongs_to :season
   belongs_to :character
@@ -5,7 +7,7 @@ class Quote < ApplicationRecord
 
   validates :body, presence: true, uniqueness: true
 
-  def as_json(_={})
+  def as_json(_ = {})
     {
       id: id,
       body: body,
