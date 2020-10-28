@@ -40,7 +40,7 @@ describe SearchSupport::Filterer do
       }
       results = build_results(user, scope, filters: filters)
 
-      filterer = described_class.new(results)
+      filterer = described_class.execute(results)
       filterer.execute
 
       expect(results.errors).to be_empty

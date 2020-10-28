@@ -2,30 +2,13 @@
 
 module SearchSupport
   class Sorter
-    def initialize(results)
-      @results = results
-    end
+    class << self
+      def execute(results, search_params)
+        sort_params = search_params['sort']
+        return results unless sort_params.present?
 
-    def execute
-      return unless sort_params.present?
-
-      @results.scope = @results.scope
-                               .order(
-                                 body: sort_params['body'].to_sym
-                               )
-    rescue StandardError => e
-      message = 'Bad sort attempted'
-      backtrace = e.backtrace.join("\n")
-      full_message = "#{message}\n#{e.message}\n#{backtrace}"
-
-      @results.errors << message
-      Rails.logger.error { full_message }
-    end
-
-    private
-
-    def sort_params
-      @results.search_params['sort']
+        results.order(body: sort_params['body'].to_sym)
+      end
     end
   end
 end

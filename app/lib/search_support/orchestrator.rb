@@ -2,14 +2,10 @@
 
 module SearchSupport
   class Orchestrator
-    attr_reader :results
+    attr_reader :errors
 
     def initialize(search_params:, user:)
-      @results = SearchSupport::Results.new(
-        user: user,
-        scope: initial_scope,
-        search_params: search_params.freeze
-      )
+      @search_params = search_params.merge({user: user})
     end
 
     STEPS = [
@@ -20,34 +16,37 @@ module SearchSupport
       SearchSupport::CacheWriter
     ].freeze
 
-    def errors
-      results.errors
-    end
-
-    def quotes
-      results.scope
-    end
-
     def search
-      return if set_from_cache
+      cached_result = read_cache
+      return cached_result if cached_result
 
-      STEPS.each do |step_klass|
-        return if errors.present?
-
-        step_klass.new(results).execute
+      STEPS.reduce(initial_scope) do |results, step_klass|
+        @current_step = step_klass
+        step_klass.execute(results, search_params)
       end
+    rescue StandardError => e
+      friendly_step_name = current_step.to_s.gsub('SearchSupport::', '')
+      message = "Bad search attempted. Failed in #{friendly_step_name}"
+      backtrace = e.backtrace.join("\n")
+      full_message = "#{message}\n#{e.message}\n#{backtrace}"
+
+      @errors = message
+      Rails.logger.error { full_message }
+      false
     end
 
     private
 
-    def set_from_cache
-      if (quotes = Rails.cache.read(results))
-        results.scope = quotes
-      end
+    def read_cache
+      userless_params = search_params.clone
+      userless_params.delete("user")
+      Rails.cache.read(userless_params)
     end
 
     def initial_scope
       Quote.includes(:character, :episode, :season)
     end
+
+    attr_reader :search_params, :current_step
   end
 end

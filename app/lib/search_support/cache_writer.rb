@@ -2,16 +2,22 @@
 
 module SearchSupport
   class CacheWriter
-    def initialize(results)
-      @results = results
+    class << self
+      def execute(results, search_params)
+        Rails.cache.write(cache_key(search_params), results)
+        results
+      end
+
+      private
+
+      def cache_key(search_params)
+        userless_params = search_params.clone
+        userless_params.delete("user")
+        {
+            search_params: userless_params.to_h,
+            quotes_updated: Quote.maximum(:updated_at)
+        }
+      end
     end
-
-    def execute
-      Rails.cache.write(results, results.scope)
-    end
-
-    private
-
-    attr_reader :results
   end
 end

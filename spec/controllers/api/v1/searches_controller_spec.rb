@@ -17,9 +17,7 @@ describe Api::V1::SearchesController do
 
   it 'calls the searcher' do
     searcher = double(:searcher,
-                      search: nil,
-                      errors: [],
-                      quotes: Quote.none)
+                      search: true)
     allow(SearchSupport::Orchestrator).to receive(:new) { searcher }
 
     params = {
