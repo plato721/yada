@@ -4,7 +4,7 @@ module SeinfeldEtl
   class Transformer
     def transform(row)
       raw_attributes.map do |raw_attribute_key|
-        self.send("map_#{raw_attribute_key}".to_sym, row[raw_attribute_key])
+        send("map_#{raw_attribute_key}".to_sym, row[raw_attribute_key])
       end.to_h
     end
 

@@ -8,7 +8,7 @@ module SearchSupport
 
     def execute
       @results.scope = @results.scope
-          .where('body ILIKE ?', "%#{match_text}%")
+                               .where('body ILIKE ?', "%#{match_text}%")
     rescue StandardError => e
       message = 'Bad search attempted'
       backtrace = e.backtrace.join("\n")

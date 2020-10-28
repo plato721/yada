@@ -8,9 +8,9 @@ module Api
         searcher.search
 
         if searcher.errors.blank?
-          json_response({quotes: searcher.quotes})
+          json_response({ quotes: searcher.quotes })
         else
-          json_response({message: searcher.errors}, :bad_request)
+          json_response({ message: searcher.errors }, :bad_request)
         end
       end
 

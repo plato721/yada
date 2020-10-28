@@ -10,9 +10,9 @@ module SearchSupport
       return unless sort_params.present?
 
       @results.scope = @results.scope
-          .order(
-      body: sort_params['body'].to_sym
-      )
+                               .order(
+                                 body: sort_params['body'].to_sym
+                               )
     rescue StandardError => e
       message = 'Bad sort attempted'
       backtrace = e.backtrace.join("\n")
