@@ -16,7 +16,8 @@ module SearchSupport
       SearchSupport::Searcher,
       SearchSupport::Filterer,
       SearchSupport::Sorter,
-      SearchSupport::Recorder
+      SearchSupport::Recorder,
+      SearchSupport::CacheWriter
     ].freeze
 
     def errors
@@ -35,14 +36,12 @@ module SearchSupport
 
         step_klass.new(results).execute
       end
-
-      Rails.cache.write(results, results.scope) if errors.blank?
     end
 
     private
 
     def set_from_cache
-      if quotes = Rails.cache.read(results)
+      if (quotes = Rails.cache.read(results))
         results.scope = quotes
       end
     end
