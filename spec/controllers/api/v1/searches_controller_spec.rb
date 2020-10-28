@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 describe Api::V1::SearchesController do
@@ -6,31 +8,30 @@ describe Api::V1::SearchesController do
   end
 
   it "doesn't crash on bad params" do
-    params = { missing: "everything" }
+    params = { missing: 'everything' }
 
     post :create, params: params, format: :json
 
     expect(response).to have_http_status(400)
   end
 
-  it "calls the searcher" do
-    searcher  = double(:searcher,
-      search: nil,
-      errors: [],
-      quotes: Quote.none
-    )
-    allow(Search::Orchestrator).to receive(:new){ searcher }
+  it 'calls the searcher' do
+    searcher = double(:searcher,
+                      search: nil,
+                      errors: [],
+                      quotes: Quote.none)
+    allow(SearchSupport::Orchestrator).to receive(:new) { searcher }
 
     params = {
       search: {
-        match_text: "yada",
+        match_text: 'yada',
         filters: {
           not: {
-            characters: ["Elaine"]
+            characters: ['Elaine']
           }
         },
         sort: {
-          body: "asc"
+          body: 'asc'
         }
       }
     }
@@ -38,45 +39,45 @@ describe Api::V1::SearchesController do
     post :create, params: params, format: :json
 
     expect(response).to have_http_status(:ok)
-    expect(Search::Orchestrator).to have_received(:new).with(
+    expect(SearchSupport::Orchestrator).to have_received(:new).with(
       search_params: dummy_search_params,
-      user: dummy_user)
+      user: dummy_user
+    )
     expect(searcher).to have_received(:search)
   end
 
-  it "responds with bad request on searcher errors" do
-    searcher  = double(:searcher,
-      search: nil,
-      errors: ["something went wrong"],
-      quotes: Quote.none
-    )
-    allow(Search::Orchestrator).to receive(:new){ searcher }
+  it 'responds with bad request on searcher errors' do
+    searcher = double(:searcher,
+                      search: nil,
+                      errors: ['something went wrong'],
+                      quotes: Quote.none)
+    allow(SearchSupport::Orchestrator).to receive(:new) { searcher }
 
-    params = { search: { match_text: "yada" }}
+    params = { search: { match_text: 'yada' } }
 
     post :create, params: params, format: :json
 
     expect(response).to have_http_status(:bad_request)
-    expect(json_body["error"]).to be_present
+    expect(json_body['error']).to be_present
   end
 
-  context "basic integration for sanity" do
-    it "searches with side effects" do
-      Search.find_by(criteria: "anything")&.destroy
-      Quote.where('body LIKE ?', "anything").destroy_all
+  context 'basic integration for sanity' do
+    it 'searches with side effects' do
+      Search.find_by(criteria: 'anything')&.destroy
+      Quote.where('body LIKE ?', 'anything').destroy_all
 
-      create(:quote, body: "Anything goes")
+      create(:quote, body: 'Anything goes')
       user = create(:user)
       sign_in(user)
 
-      params = { search: { match_text: "anything" }}
+      params = { search: { match_text: 'anything' } }
 
       post :create, params: params, format: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_body["quotes"].length).to eq(1)
+      expect(json_body['quotes'].length).to eq(1)
 
-      search = Search.find_by(criteria: "anything")
+      search = Search.find_by(criteria: 'anything')
       expect(search).to be_present
 
       search_instance = UserSearch.find_by(user: user, search: search)

@@ -24,6 +24,7 @@ gem 'rspec-rails', '~> 3.8.2'
 gem 'rest-client', '~> 2.1.0'
 
 group :development, :test do
+  gem 'rubocop'
   gem 'pry'
 end
 

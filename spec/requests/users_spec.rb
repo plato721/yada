@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'swagger_helper'
 
 RSpec.describe 'users', type: :request do
@@ -21,30 +23,30 @@ RSpec.describe 'users', type: :request do
               email: { type: :string },
               token: { type: :string }
             },
-            required: [ 'email' ]
+            required: ['email']
           },
-          required: [ 'user' ]
+          required: ['user']
         }
       }
 
       response '201', 'User/Token Created' do
-        let(:user) { { user: { email: 'abe.lincoln@hotmail.com' }} }
+        let(:user) { { user: { email: 'abe.lincoln@hotmail.com' } } }
         run_test! do |response|
           body = JSON.parse(response.body)
 
-          expect(body.keys).to match_array(["email", "token"])
-          expect(body["email"]).to eql("abe.lincoln@hotmail.com")
-          expect(body["token"]).to_not be_blank
+          expect(body.keys).to match_array(%w[email token])
+          expect(body['email']).to eql('abe.lincoln@hotmail.com')
+          expect(body['token']).to_not be_blank
         end
       end
 
       response '422', 'Blank email' do
-        let(:user) { { user: { email: '' }} }
+        let(:user) { { user: { email: '' } } }
         run_test!
       end
 
       response '400', 'Bad params' do
-        let(:user){}
+        let(:user) {}
         run_test!
       end
     end
