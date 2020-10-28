@@ -2,47 +2,49 @@
 
 module SearchSupport
   class Orchestrator
-    attr_reader :results
+    attr_reader :errors
+
+    STEPS = [
+      SearchSupport::CacheReader,
+      SearchSupport::Searcher,
+      SearchSupport::Filterer,
+      SearchSupport::Sorter,
+      SearchSupport::CacheWriter
+    ].freeze
 
     def initialize(search_params:, user:)
-      @results = SearchSupport::Results.new(
-        user: user,
+      @results_builder = SearchSupport::ResultsBuilder.new(
         scope: initial_scope,
+        user: user,
         search_params: search_params.freeze
       )
     end
 
-    STEPS = [
-      SearchSupport::Searcher,
-      SearchSupport::Filterer,
-      SearchSupport::Sorter,
-      SearchSupport::Recorder
-    ].freeze
-
-    def errors
-      results.errors
-    end
-
-    def quotes
-      results.scope
-    end
-
+    # The results_builder holds a results which is a scope that continues to be narrowed
+    # and transformed as the pipeline moves. If the completed flag is set, the loop stops.
+    # If no errors are present, the narrowed scope is returned. Otherwise, false is returned
+    # and errors are set to be read from this object.
     def search
-      return if set_from_cache
-
       STEPS.each do |step_klass|
-        return if errors.present?
-
-        step_klass.new(results).execute
+        step_klass.execute(results_builder)
+        break if results_builder.complete?
       end
 
-      Rails.cache.write(results, results.scope) if errors.blank?
+      record_search
+      if results_builder.errors.blank?
+        results_builder.results
+      else
+        @errors = results_builder.errors
+        false
+      end
     end
 
-    def set_from_cache
-      if quotes = Rails.cache.read(results)
-        results.scope = quotes
-      end
+    private
+
+    attr_reader :results_builder
+
+    def record_search
+      SearchSupport::Recorder.execute(results_builder)
     end
 
     def initial_scope

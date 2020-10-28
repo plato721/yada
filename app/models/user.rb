@@ -10,6 +10,8 @@ class User < ApplicationRecord
   validates :token, presence: true, uniqueness: true
   before_validation :set_token
 
+  private
+
   def downcase_email
     self.email ||= ''
     self.email = email.downcase

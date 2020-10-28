@@ -2,24 +2,22 @@
 
 module SearchSupport
   class Searcher
-    def initialize(results)
-      @results = results
-    end
+    include SearchSupport::ExceptionHandler
 
-    def match_text
-      @results.search_params['match_text'] || ''
-    end
+    class << self
+      def execute(results_builder)
+        results = results_builder.results
+                                 .where('body ILIKE ?', "%#{match_text(results_builder)}%")
+        results_builder.results = results
+      rescue StandardError => e
+        record_errors_and_terminate(e, results_builder)
+      end
 
-    def execute
-      @results.scope = @results.scope
-                               .where('body ILIKE ?', "%#{match_text}%")
-    rescue StandardError => e
-      message = 'Bad search attempted'
-      backtrace = e.backtrace.join("\n")
-      full_message = "#{message}\n#{e.message}\n#{backtrace}"
+      private
 
-      @results.errors << message
-      Rails.logger.error { full_message }
+      def match_text(results_builder)
+        results_builder.search_params['match_text'] || ''
+      end
     end
   end
 end

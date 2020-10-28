@@ -2,8 +2,6 @@
 
 module UserSupport
   class CreateJson
-    attr_reader :user
-
     def initialize(user)
       @user = user
     end
@@ -14,5 +12,9 @@ module UserSupport
         token: user.token
       }
     end
+
+    private
+
+    attr_reader :user
   end
 end

@@ -5,12 +5,12 @@ module Api
     class SearchesController < AuthenticatedController
       def create
         searcher = create_searcher
-        searcher.search
+        results = searcher.search
 
-        if searcher.errors.blank?
-          json_response({quotes: searcher.quotes})
+        if results
+          json_response({ quotes: results })
         else
-          json_response({message: searcher.errors}, :bad_request)
+          json_response({ message: searcher.errors }, :bad_request)
         end
       end
 

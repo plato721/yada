@@ -3,7 +3,6 @@
 module Api
   module V1
     class UsersController < ApplicationController
-
       # POST /api/v1/users
       def create
         user = User.new(user_params)
@@ -12,7 +11,7 @@ module Api
           user = ::UserSupport::CreateJson.new(user)
           render json: user, status: :created
         else
-          render json: user.errors, status: :unprocessable_entity
+          json_response({ message: user.errors.full_messages }, :unprocessable_entity)
         end
       end
 

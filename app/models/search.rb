@@ -7,6 +7,8 @@ class Search < ApplicationRecord
   validates :criteria, uniqueness: true
   before_validation :downcase_criteria
 
+  private
+
   def downcase_criteria
     self.criteria ||= ''
     self.criteria = criteria.downcase

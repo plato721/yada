@@ -5,7 +5,7 @@ module Api
     class QuotesController < AuthenticatedController
       def index
         quotes = Quote.includes(:season, :character, :episode)
-        json_response({quotes: quotes})
+        json_response({ quotes: quotes })
       end
 
       def show
