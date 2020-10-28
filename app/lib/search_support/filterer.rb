@@ -18,6 +18,8 @@ module SearchSupport
       Rails.logger.error { full_message }
     end
 
+    private
+
     def filters
       @filters ||= @results.search_params['filters']
     end

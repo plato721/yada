@@ -6,17 +6,13 @@ module SearchSupport
       @results = results
     end
 
-    def sort_params
-      @results.search_params['sort']
-    end
-
     def execute
       return unless sort_params.present?
 
       @results.scope = @results.scope
-                               .order(
-                                 body: sort_params['body'].to_sym
-                               )
+          .order(
+      body: sort_params['body'].to_sym
+      )
     rescue StandardError => e
       message = 'Bad sort attempted'
       backtrace = e.backtrace.join("\n")
@@ -24,6 +20,12 @@ module SearchSupport
 
       @results.errors << message
       Rails.logger.error { full_message }
+    end
+
+    private
+
+    def sort_params
+      @results.search_params['sort']
     end
   end
 end

@@ -39,6 +39,8 @@ module SearchSupport
       Rails.cache.write(results, results.scope) if errors.blank?
     end
 
+    private
+
     def set_from_cache
       if quotes = Rails.cache.read(results)
         results.scope = quotes

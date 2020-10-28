@@ -6,13 +6,9 @@ module SearchSupport
       @results = results
     end
 
-    def match_text
-      @results.search_params['match_text'] || ''
-    end
-
     def execute
       @results.scope = @results.scope
-                               .where('body ILIKE ?', "%#{match_text}%")
+          .where('body ILIKE ?', "%#{match_text}%")
     rescue StandardError => e
       message = 'Bad search attempted'
       backtrace = e.backtrace.join("\n")
@@ -20,6 +16,12 @@ module SearchSupport
 
       @results.errors << message
       Rails.logger.error { full_message }
+    end
+
+    private
+
+    def match_text
+      @results.search_params['match_text'] || ''
     end
   end
 end
