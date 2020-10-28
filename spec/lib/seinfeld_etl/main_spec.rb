@@ -26,7 +26,7 @@ describe SeinfeldEtl::Main do
                      'episode' => '9',
                      'image' => '' }] }
   end
-  let(:transformer) { SeinfeldEtl::Transformer.new }
+  let(:transformer) { SeinfeldEtl::Transformer }
   let(:fetcher) { SeinfeldApiClient.new }
 
   before do
