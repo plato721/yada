@@ -14,12 +14,6 @@ module Api
         else
           render json: user.errors, status: :unprocessable_entity
         end
-      rescue ActionController::UnpermittedParameters => e
-        render json: { error:  { unknown_parameters: e.message } },
-               status: :bad_request
-      rescue ActionController::ParameterMissing => e
-        render json: { error:  { missing_parameter: e.message } },
-               status: :bad_request
       end
 
       private

@@ -7,18 +7,11 @@ module Api
         searcher = create_searcher
         searcher.search
 
-        if !searcher.errors.present?
-          render json: { quotes: searcher.quotes }
+        if searcher.errors.blank?
+          json_response({quotes: searcher.quotes})
         else
-          render json: { error: { unknown_parameters: searcher.errors } },
-                 status: :bad_request
+          json_response({message: searcher.errors}, :bad_request)
         end
-      rescue ActionController::UnpermittedParameters => e
-        render json: { error:  { unknown_parameters: e.message } },
-               status: :bad_request
-      rescue ActionController::ParameterMissing => e
-        render json: { error:  { missing_parameter: e.message } },
-               status: :bad_request
       end
 
       private
