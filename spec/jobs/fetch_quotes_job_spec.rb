@@ -4,7 +4,7 @@ require 'rails_helper'
 
 describe FetchQuotesJob do
   it 'calls the seinfeld etl main' do
-    fetcher = SeinfeldEtl::Main.new
+    fetcher = SeinfeldApiClient.new
     allow(fetcher).to receive(:execute)
     allow(SeinfeldEtl::Main).to receive(:new) { fetcher }
 

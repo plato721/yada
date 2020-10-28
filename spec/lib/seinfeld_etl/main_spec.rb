@@ -26,12 +26,13 @@ describe SeinfeldEtl::Main do
                      'episode' => '9',
                      'image' => '' }] }
   end
+  let(:transformer) { SeinfeldEtl::Transformer.new }
+  let(:fetcher) { SeinfeldApiClient.new }
 
   before do
-    fetcher = SeinfeldApiClient.new
     allow(fetcher).to receive(:execute) {}
     allow(fetcher).to receive(:data) { sample_data }
-    @main = described_class.new(fetcher: fetcher)
+    @main = described_class.new(fetcher: fetcher, transformer: transformer)
   end
 
   it 'creates quotes and supporting objects idempotently' do
@@ -65,7 +66,7 @@ describe SeinfeldEtl::Main do
       fetcher = double(:fetcher,
                        execute: nil,
                        error_message: 'Something terrible happened.')
-      @main = described_class.new(fetcher: fetcher)
+      @main = described_class.new(fetcher: fetcher, transformer: transformer)
     end
 
     it 'execution is false' do

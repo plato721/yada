@@ -2,15 +2,9 @@
 
 module SeinfeldEtl
   class Main
-    attr_reader :fetcher, :transformer
-
-    def initialize(fetcher: nil)
-      @fetcher = fetcher || default_fetcher
-      @transformer = Transformer.new
-    end
-
-    def default_fetcher
-      ::SeinfeldApiClient.new
+    def initialize(fetcher:, transformer:)
+      @fetcher = fetcher
+      @transformer = transformer
     end
 
     def execute
@@ -31,6 +25,8 @@ module SeinfeldEtl
       visual_log('...Quote load complete...')
     end
 
+    private
+
     def visual_log(message, level = :info)
       puts message
       Rails.logger.send(level) { message }
@@ -40,5 +36,7 @@ module SeinfeldEtl
       message = "Problem with ETL due to fetcher error: #{fetcher.error_message}"
       visual_log(message, :error)
     end
+
+    attr_reader :fetcher, :transformer
   end
 end
