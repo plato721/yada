@@ -7,14 +7,6 @@ class SeinfeldApiClient
     @options = default_options.merge(options)
   end
 
-  def default_options
-    {
-      method: :get,
-      url: 'https://seinfeld-quotes.herokuapp.com/quotes',
-      timeout: 5
-    }
-  end
-
   def execute
     response = RestClient::Request.execute(@options)
     @data = JSON.parse(response.body)
@@ -26,6 +18,8 @@ class SeinfeldApiClient
     backtrace = e.backtrace.join("\n")
     Rails.logger.error { "#{@error_message}\n#{backtrace}" }
   end
+
+  private
 
   def validate_data
     keys_found = data['quotes'].first.keys
@@ -40,5 +34,13 @@ class SeinfeldApiClient
 
     backtrace = e.backtrace.join("\n")
     Rails.logger.error { "#{@error_message}\n#{backtrace}" }
+  end
+
+  def default_options
+    {
+      method: :get,
+      url: 'https://seinfeld-quotes.herokuapp.com/quotes',
+      timeout: 5
+    }
   end
 end

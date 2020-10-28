@@ -2,44 +2,31 @@
 
 module SeinfeldEtl
   class Transformer
-    def objects_transformers
-      @objects_transformers ||= begin
-        [
-          ['author', AuthorTransformer.new],
-          ['episode', EpisodeTransformer.new],
-          ['season', SeasonTransformer.new],
-          ['quote', QuoteTransformer.new]
-        ]
-      end
-    end
-
     def transform(row)
-      objects_transformers.map do |raw_attribute_key, transformer|
-        transformer.transform(row[raw_attribute_key])
+      raw_attributes.map do |raw_attribute_key|
+        self.send("map_#{raw_attribute_key}".to_sym, row[raw_attribute_key])
       end.to_h
     end
-  end
 
-  class AuthorTransformer
-    def transform(value)
+    private
+
+    def raw_attributes
+      %w[author episode season quote]
+    end
+
+    def map_author(value)
       [:character_id, Character.find_or_create_by(name: value).id]
     end
-  end
 
-  class EpisodeTransformer
-    def transform(value)
+    def map_episode(value)
       [:episode_id, Episode.find_or_create_by(number: value.to_i).id]
     end
-  end
 
-  class SeasonTransformer
-    def transform(value)
+    def map_season(value)
       [:season_id, Season.find_or_create_by(number: value.to_i).id]
     end
-  end
 
-  class QuoteTransformer
-    def transform(value)
+    def map_quote(value)
       [:body, value]
     end
   end
