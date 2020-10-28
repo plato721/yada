@@ -51,7 +51,7 @@ RSpec.describe 'quotes', type: :request do
       response '200', 'quote retrieved' do
         let(:token) { @user.token }
         let(:id) { @demo_quotes.first.id }
-        run_test! do |response|
+        run_test! do |_response|
           received_quote = json_body['quote']
           remote_quote = Quote.find(@demo_quotes.first.id)
 

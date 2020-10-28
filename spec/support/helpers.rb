@@ -42,9 +42,9 @@ module Helpers
   def build_results(user, scope, stage_params)
     search_params = build_search_params(stage_params)
     SearchSupport::ResultsBuilder.new(
-        user: user,
-        scope: scope,
-        search_params: search_params
+      user: user,
+      scope: scope,
+      search_params: search_params
     )
   end
 end

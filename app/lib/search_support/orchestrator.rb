@@ -5,11 +5,11 @@ module SearchSupport
     attr_reader :errors
 
     STEPS = [
-        SearchSupport::CacheReader,
-        SearchSupport::Searcher,
-        SearchSupport::Filterer,
-        SearchSupport::Sorter,
-        SearchSupport::CacheWriter
+      SearchSupport::CacheReader,
+      SearchSupport::Searcher,
+      SearchSupport::Filterer,
+      SearchSupport::Sorter,
+      SearchSupport::CacheWriter
     ].freeze
 
     def initialize(search_params:, user:)
@@ -20,14 +20,10 @@ module SearchSupport
       )
     end
 
-    def initial_scope
-      Quote.includes(:character, :episode, :season)
-    end
-
-    # The results_builder holds a results which is a scope that continues to be whittled
-    # down as the pipeline moves. If the completed flag is set, the loop stops. If errors
-    # are present, errors are set on this the Orchestrator object. Otherwise, the whittled
-    # down scope is returns.
+    # The results_builder holds a results which is a scope that continues to be narrowed
+    # and transformed as the pipeline moves. If the completed flag is set, the loop stops.
+    # If no errors are present, the narrowed scope is returned. Otherwise, false is returned
+    # and errors are set to be read from this object.
     def search
       STEPS.each do |step_klass|
         step_klass.execute(results_builder)
@@ -43,10 +39,16 @@ module SearchSupport
       end
     end
 
+    private
+
+    attr_reader :results_builder
+
     def record_search
       SearchSupport::Recorder.execute(results_builder)
     end
 
-    attr_reader :results_builder
+    def initial_scope
+      Quote.includes(:character, :episode, :season)
+    end
   end
 end

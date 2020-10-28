@@ -5,7 +5,7 @@ require 'rails_helper'
 describe SearchSupport::Searcher do
   let(:user) { double(:user) }
   let(:scope) { Quote.all }
-  let(:body) {'The quick brown fox jumped over the lazy dog.'}
+  let(:body) { 'The quick brown fox jumped over the lazy dog.' }
 
   it 'finds exactly' do
     quote = create(:quote, body: body)

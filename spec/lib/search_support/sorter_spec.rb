@@ -19,10 +19,10 @@ describe SearchSupport::Sorter do
     described_class.execute(results_builder)
 
     expect(results_builder.results.pluck(:body)).to eq([
-                                               'aaa auto',
-                                               'mmm middle of the road',
-                                               'zzz tax evasion'
-                                             ])
+                                                         'aaa auto',
+                                                         'mmm middle of the road',
+                                                         'zzz tax evasion'
+                                                       ])
   end
 
   it 'sorts by quote body - descending' do
@@ -31,10 +31,10 @@ describe SearchSupport::Sorter do
     described_class.execute(results_builder)
 
     expect(results_builder.results.pluck(:body)).to eq([
-                                               'zzz tax evasion',
-                                               'mmm middle of the road',
-                                               'aaa auto'
-                                             ])
+                                                         'zzz tax evasion',
+                                                         'mmm middle of the road',
+                                                         'aaa auto'
+                                                       ])
   end
 
   it 'errors for non-body sorts' do
