@@ -1,45 +1,52 @@
 # frozen_string_literal: true
 
 class SeinfeldApiClient
-  attr_reader :data, :error_message
-
-  def initialize(options = {})
-    @options = default_options.merge(options)
+  def initialize(rest_client: nil, url: nil)
+    @rest_client = rest_client || default_rest_client
+    @url = url || default_url
   end
 
   def execute
-    response = RestClient::Request.execute(@options)
-    @data = JSON.parse(response.body)
-    validate_data
-  rescue StandardError => e
-    @error_message = "#{e.class}: e.message"
-    @data = nil
-
-    backtrace = e.backtrace.join("\n")
-    Rails.logger.error { "#{@error_message}\n#{backtrace}" }
+    validate parse fetch
   end
 
   private
 
-  def validate_data
-    keys_found = data['quotes'].first.keys
-    %w[quote author season episode image].each do |expected_key|
-      if keys_found.none? { |actual_key| actual_key == expected_key }
-        @error_message = 'Received unexpected data'
-        return false
-      end
-    end
-  rescue StandardError => e
-    @error_message = "#{e.class}: e.message"
-
-    backtrace = e.backtrace.join("\n")
-    Rails.logger.error { "#{@error_message}\n#{backtrace}" }
+  def fetch
+    @rest_client.execute rest_options(@url)
   end
 
-  def default_options
+  def parse(raw_response)
+    JSON.parse raw_response.body
+  end
+
+  def validate(data)
+    data.tap { |data| validate_headers(data) }
+  end
+
+  # looks at the first row of the data to see if it has the keys we want
+  def validate_headers(data)
+    actual_keys = data['quotes'].first.keys
+
+    %w[quote author season episode image].each do |expected_key|
+      if actual_keys.none? { |actual_key| actual_key == expected_key }
+        raise "Received unexpected data. Missing '#{expected_key}' key."
+      end
+    end
+  end
+
+  def default_rest_client
+    RestClient::Request
+  end
+
+  def default_url
+    'https://seinfeld-quotes.herokuapp.com/quotes'
+  end
+
+  def rest_options(url)
     {
       method: :get,
-      url: 'https://seinfeld-quotes.herokuapp.com/quotes',
+      url: url,
       timeout: 5
     }
   end

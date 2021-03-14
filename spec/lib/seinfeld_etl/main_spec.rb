@@ -9,7 +9,8 @@ describe SeinfeldEtl::Main do
                      'season' => '5',
                      'episode' => '12',
                      'image' => '' },
-                   { 'quote' => 'Hello, 911? How are ya?', 'author' => 'Jerry', 'season' => '4', 'episode' => '1/2', 'image' => '' },
+                   { 'quote' => 'Hello, 911? How are ya?', 'author' => 'Jerry', 'season' => '4', 'episode' => '1/2',
+                     'image' => '' },
                    { 'quote' => 'You should do it like a band-aid -- one motion, RIGHT OFF!',
                      'author' => 'Jerry',
                      'season' => '2',
@@ -30,8 +31,7 @@ describe SeinfeldEtl::Main do
   let(:fetcher) { SeinfeldApiClient.new }
 
   before do
-    allow(fetcher).to receive(:execute) {}
-    allow(fetcher).to receive(:data) { sample_data }
+    allow(fetcher).to receive(:execute) { sample_data }
     @main = described_class.new(fetcher: fetcher, transformer: transformer)
   end
 
